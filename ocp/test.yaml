@@ -24,7 +24,7 @@ include:
       nginx:
         enableImageChangeTrigger: true
         repoUri: https://github.com/cloudigrade/cloudigrade.git
-        repoContextDir: deployment/nginx/
+        repoContextDir: deployment/
         baseImage: centos/nginx-112-centos7:latest
         imageStreamName: cloudigrade-nginx
         imageStreamTag: latest
