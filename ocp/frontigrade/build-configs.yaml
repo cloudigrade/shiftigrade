@@ -22,7 +22,7 @@ spec:
   triggers:
   {{if ne .env "local"}}
   - github:
-      secret: {{.githubSecretToken}}
+      secret: {{.github.secretToken | default (randAlphaNum 16)}}
     type: GitHub
   {{end}}
   - type: ConfigChange

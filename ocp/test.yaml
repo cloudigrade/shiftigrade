@@ -7,6 +7,8 @@ include:
     values:
       name: cloudigrade
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
+      github:
+        secretToken:
       api:
         enableImageChangeTrigger: true
         repoUri: https://github.com/cloudigrade/cloudigrade.git
@@ -39,6 +41,7 @@ include:
           defaultRegion: us-east-1
           accessKeyId:
           secretAccessKey:
+          namePrefix: test-
         defaultRegion: us-east-1
         accessKeyId:
         secretAccessKey:
@@ -53,6 +56,8 @@ include:
   - name: frontigrade
     values:
       name: frontigrade
+      github:
+        secretToken:
       frontigrade:
         enableImageChangeTrigger: true
         repoUri: https://github.com/cloudigrade/frontigrade.git
