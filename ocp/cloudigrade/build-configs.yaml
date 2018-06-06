@@ -1,0 +1,64 @@
+---
+kind: BuildConfig
+apiVersion: v1
+metadata:
+  name: {{.name}}-nginx
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  failedBuildsHistoryLimit: 5
+  output:
+    to:
+      kind: ImageStreamTag
+      name: {{.nginx.imageStreamName}}:{{.nginx.imageStreamTag}}
+  runPolicy: Serial
+  source:
+    contextDir: {{.nginx.repoContextDir}}
+    git:
+      uri: {{.nginx.repoUri}}
+    type: Git
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: {{.nginx.baseImage}}
+  triggers:
+  {{if ne .env "local"}}
+  - github:
+      secret: {{.githubSecretToken}}
+    type: GitHub
+  {{end}}
+  - type: ConfigChange
+  - imageChange: {}
+    type: ImageChange
+---
+kind: BuildConfig
+apiVersion: v1
+metadata:
+  name: {{.name}}-api
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  failedBuildsHistoryLimit: 5
+  runPolicy: Serial
+  strategy:
+    type: Docker
+  source:
+    type: Git
+    git:
+      uri: {{env "API_REPO_URI" | default .api.repoUri}}
+      ref: {{env "API_REPO_REF" | default .api.repoUriBranch}}
+  output:
+    to:
+      kind: ImageStreamTag
+      name: {{.api.imageStreamName}}:{{.api.imageStreamTag}}
+  triggers:
+  {{if ne .env "local"}}
+  - github:
+      secret: {{.githubSecretToken}}
+    type: GitHub
+  {{end}}
+  - type: ConfigChange
+  - imageChange: {}
+    type: ImageChange

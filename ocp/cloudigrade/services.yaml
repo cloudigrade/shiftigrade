@@ -1,0 +1,17 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{.name}}-api
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  selector:
+    name: {{.name}}-api
+  ports:
+  - name: nginx
+    port: 80
+    protocol: TCP
+    targetPort: {{.nginx.port}}
+  sessionAffinity: None
+  type: ClusterIP

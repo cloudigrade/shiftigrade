@@ -1,0 +1,20 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{.name}}
+  labels:
+    deployment: {{.name}}-deployment
+data:
+  aws-default-region: {{.aws.defaultRegion}}
+  aws-sqs-region: {{.aws.sqs.defaultRegion}}
+{{if ne .env "local"}}
+  aws-sqs-queue-name-prefix: {{.aws.sqs.namePrefix}}
+{{else}}
+  aws-sqs-queue-name-prefix: {{env "USER" | printf "%s-" | quote}}
+{{end}}
+  django-allowed-hosts: {{.django.allowedHosts | quote}}
+  django-database-host: {{.db.databaseHost}}
+  django-debug: {{.django.debug | quote}}
+  django-settings-module: {{.django.settingsModule}}
+type: Opaque

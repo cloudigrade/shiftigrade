@@ -1,0 +1,39 @@
+---
+kind: DeploymentConfig
+apiVersion: v1
+metadata:
+  name: {{.name}}
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  selector:
+    name: {{.name}}
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: {{.name}}
+    spec:
+      containers:
+      - name: {{.name}}
+        image: ' '
+        resources:
+          limits:
+            memory: {{.frontigrade.memoryLimit}}
+        ports:
+        - containerPort: {{.frontigrade.port}}
+          protocol: TCP
+  triggers:
+    - type: "ImageChange"
+      imageChangeParams:
+        automatic: {{.frontigrade.enableImageChangeTrigger}}
+        containerNames:
+          - {{.name}}
+        from:
+          kind: ImageStreamTag
+          name: "{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}"
+          namespace: {{.namespace}}
+    - type: ConfigChange

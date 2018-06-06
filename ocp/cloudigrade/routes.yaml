@@ -1,0 +1,34 @@
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{.name}}-api
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  host: {{.api.routeHost}}
+  path: {{.api.routePath}}
+  port:
+    targetPort: nginx
+  to:
+    kind: Service
+    name: {{.name}}-api
+    weight: 100
+  wildcardPolicy: None
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{.name}}-auth
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  host: {{.auth.routeHost}}
+  path: {{.auth.routePath}}
+  port:
+    targetPort: nginx
+  to:
+    kind: Service
+    name: {{.name}}-api
+    weight: 100
+  wildcardPolicy: None

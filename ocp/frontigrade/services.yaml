@@ -1,0 +1,17 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{.name}}
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  selector:
+    name: {{.name}}
+  ports:
+  - name: {{.name}}
+    port: 80
+    protocol: TCP
+    targetPort: {{.frontigrade.port}}
+  sessionAffinity: None
+  type: ClusterIP

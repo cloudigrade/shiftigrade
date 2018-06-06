@@ -1,0 +1,65 @@
+---
+global:
+  env: local
+  namespace: myproject
+include:
+  - name: cloudigrade
+    values:
+      name: cloudigrade
+      healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
+      api:
+        enableImageChangeTrigger: true
+        repoUri: https://github.com/cloudigrade/cloudigrade.git
+        repoUriBranch: master
+        imageStreamName: cloudigrade
+        imageStreamTag: latest
+        memoryLimit: 512Mi
+        routeHost: cloudigrade.127.0.0.1.nip.io
+        routePath: /api/v1/
+      auth:
+        routeHost: cloudigrade.127.0.0.1.nip.io
+        routePath: /auth/
+      nginx:
+        enableImageChangeTrigger: true
+        repoUri: https://github.com/cloudigrade/cloudigrade.git
+        repoContextDir: deployment/
+        baseImage: centos/nginx-112-centos7:latest
+        imageStreamName: cloudigrade-nginx
+        imageStreamTag: latest
+        memoryLimit: 512Mi
+        port: 8080
+      celery:
+        enableImageChangeTrigger: true
+        imageStreamName: cloudigrade
+        imageStreamTag: latest
+        replicaCount: 1
+        memoryLimit: 512Mi
+      aws:
+        sqs:
+          defaultRegion: us-east-1
+          accessKeyId: 123
+          secretAccessKey: 456
+        defaultRegion: us-east-1
+        accessKeyId: 123
+        secretAccessKey: 456
+      django:
+        debug: true
+        allowedHosts: "*"
+        settingsModule: config.settings.prod
+        secretKey: local
+      db:
+        secretsFileName: postgresql
+        databaseHost: postgresql.myproject.svc
+  - name: frontigrade
+    values:
+      name: frontigrade
+      frontigrade:
+        enableImageChangeTrigger: true
+        repoUri: https://github.com/cloudigrade/frontigrade.git
+        repoUriBranch: master
+        imageStreamName: frotigrade
+        imageStreamTag: latest
+        memoryLimit: 512Mi
+        port: 8080
+        routeHost: cloudigrade.127.0.0.1.nip.io
+        routePath: /

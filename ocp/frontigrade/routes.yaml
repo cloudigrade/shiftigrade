@@ -1,0 +1,17 @@
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{.name}}
+  labels:
+    deployment: {{.name}}-deployment
+spec:
+  host: {{.frontigrade.routeHost}}
+  path: {{.frontigrade.routePath}}
+  port:
+    targetPort: {{.name}}
+  to:
+    kind: Service
+    name: {{.name}}
+    weight: 100
+  wildcardPolicy: None
