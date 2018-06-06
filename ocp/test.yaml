@@ -1,6 +1,6 @@
 ---
 global:
-  env: local
+  env: test
   namespace: cloudigrade-test
 include:
   - name: cloudigrade
