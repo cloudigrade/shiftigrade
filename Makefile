@@ -22,12 +22,13 @@ help:
 	@echo "==[OpenShift]========================================================"
 	@echo "==[OpenShift/Administration]========================================="
 	@echo "  oc-up                         to start the local OpenShift cluster."
+	@echo "  oc-up-dev                     to start the local OpenShift cluster and deploy the db."
 	@echo "  oc-up-all                     to start the cluster and deploy supporting services along with cloudigrade."
 	@echo "  oc-down                       to stop the local OpenShift cluster."
 	@echo "  oc-clean                      to stop the local OpenShift cluster and delete configuration."
 	@echo "==[OpenShift/Deployment Shortcuts]==================================="
-	@echo "  oc-create-templates           to create the ImageStream and template objects."
-	@echo "  oc-create-db                  to create and deploy the DB."
+	@echo "  oc-add-imagestream            to create the ImageStream Tag for PostgreSQL."
+	@echo "  oc-deploy-db                  to create and deploy the DB."
 	@echo "  oc-create-cloudigrade-all     to create and deploy the cloudigrade and frontigrade."
 	@echo "  oc-create-cloudigrade-api     to create and deploy the cloudigrade. "
 	@echo "  oc-create-cloudigrade-ui      to create and deploy the frontigrade."
@@ -58,10 +59,10 @@ ifeq ($(OS),Linux)
 	make oc-login-developer
 endif
 
-oc-create-templates:
+oc-add-imagestream:
 	oc create istag postgresql:9.6 --from-image=centos/postgresql-96-centos7
 
-oc-create-db:
+oc-deploy-db:
 	oc process openshift//postgresql-persistent \
 		-p NAMESPACE=myproject \
 		-p POSTGRESQL_USER=postgres \
@@ -86,9 +87,9 @@ oc-forward-ports:
 oc-stop-forwarding-ports:
 	kill -HUP $$(ps -eo pid,command | grep "oc port-forward" | grep -v grep | awk '{print $$1}')
 
-oc-up-dev: oc-up sleep-60 oc-create-templates oc-create-db
+oc-up-dev: oc-up oc-add-imagestream oc-deploy-db
 
-oc-up-all: oc-up sleep-60 oc-create-templates oc-create-db sleep-30 oc-create-cloudigrade-all
+oc-up-all: oc-up sleep-60 oc-add-imagestream oc-deploy-db sleep-30 oc-create-cloudigrade-all
 
 oc-down:
 	oc cluster down
