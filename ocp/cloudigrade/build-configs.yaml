@@ -15,7 +15,8 @@ spec:
   source:
     contextDir: {{.nginx.repoContextDir}}
     git:
-      uri: {{.nginx.repoUri}}
+      uri: {{env "NGINX_REPO_URI" | default .nginx.repoUri}}
+      ref: {{env "NGINX_REPO_REF" | default .nginx.repoUriBranch}}
     type: Git
   strategy:
     type: Source
@@ -26,7 +27,7 @@ spec:
   triggers:
   {{if ne .env "local"}}
   - github:
-      secret: {{.github.secretToken | default (randAlphaNum 16)}}
+      secret: {{env "GITHUB_SECRET_TOKEN" | default .github.secretToken | default (randAlphaNum 16)}}
     type: GitHub
   {{end}}
   - type: ConfigChange
@@ -56,7 +57,7 @@ spec:
   triggers:
   {{if ne .env "local"}}
   - github:
-      secret: {{.github.secretToken | default (randAlphaNum 16)}}
+      secret: {{env "GITHUB_SECRET_TOKEN" | default .github.secretToken | default (randAlphaNum 16)}}
     type: GitHub
   {{end}}
   - type: ConfigChange

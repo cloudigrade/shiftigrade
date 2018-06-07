@@ -22,6 +22,7 @@ include:
       nginx:
         enableImageChangeTrigger: true
         repoUri: https://github.com/cloudigrade/cloudigrade.git
+        repoUriBranch: master
         repoContextDir: deployment/
         baseImage: centos/nginx-112-centos7:latest
         imageStreamName: cloudigrade-nginx
@@ -57,7 +58,7 @@ include:
         enableImageChangeTrigger: true
         repoUri: https://github.com/cloudigrade/frontigrade.git
         repoUriBranch: master
-        imageStreamName: frotigrade
+        imageStreamName: frontigrade
         imageStreamTag: latest
         memoryLimit: 512Mi
         port: 8080
