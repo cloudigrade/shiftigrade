@@ -80,7 +80,7 @@ Please also fetch the latest release of ``kontemplate`` from `here <https://gith
 Developer Environment
 ---------------------
 
-Please check the `cloudigrade repo<https://github.com/cloudigrade/cloudigrade#developer-environment>`_ for an up to date list of dev requirements.
+Please check the `cloudigrade repo <https://github.com/cloudigrade/cloudigrade#developer-environment>`_ for an up to date list of dev requirements.
 
 
 Configure AWS account credentials
@@ -114,7 +114,7 @@ Common commands
 
 
 Running Locally in OpenShift
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To start the local cluster run the following:
 
