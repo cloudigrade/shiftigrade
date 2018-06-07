@@ -46,6 +46,13 @@ include:
         defaultRegion: us-east-1
         accessKeyId:
         secretAccessKey:
+        houndigrade:
+          ecs:
+            clusterName: cloudigrade-test-us-east-1a
+            imageName: cloudigrade/houndigrade
+            familyName: Houndigrade
+          availabilityZone: us-east-1a
+          autoscalingGroupName: EC2ContainerService-cloudigrade-test-us-east-1a-EcsInstanceAsg-N1MWE3Y628WK
       django:
         debug: true
         allowedHosts: '*'

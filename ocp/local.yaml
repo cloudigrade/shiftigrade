@@ -43,6 +43,13 @@ include:
         defaultRegion: us-east-1
         accessKeyId: 123
         secretAccessKey: 456
+        houndigrade:
+          ecs:
+            clusterName:
+            imageName: cloudigrade/houndigrade
+            familyName: Houndigrade
+          availabilityZone: us-east-1a
+          autoscalingGroupName:
       django:
         debug: true
         allowedHosts: "*"

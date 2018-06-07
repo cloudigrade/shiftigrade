@@ -7,6 +7,11 @@ metadata:
     deployment: {{.name}}-deployment
 data:
   aws-default-region: {{.aws.defaultRegion}}
+  aws-houndigrade-ecs-cluster-name: {{env "HOUNDIGRADE_ECS_CLUSTER_NAME" | default .aws.houndigrade.ecs.clusterName}}
+  aws-houndigrade-ecs-image-name: {{env "HOUNDIGRADE_ECS_IMAGE_NAME" | default .aws.houndigrade.ecs.imageName}}
+  aws-houndigrade-ecs-family-name: {{env "HOUNDIGRADE_ECS_FAMILY_NAME" | default .aws.houndigrade.ecs.familyName}}
+  aws-houndigrade-availability-zone: {{env "HOUNDIGRADE_AWS_AVAILABILITY_ZONE" | default .aws.houndigrade.availabilityZone}}
+  aws-houndigrade-autoscaling-group-name: {{env "HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME" | default .aws.houndigrade.autoscalingGroupName}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
 {{if ne .env "local"}}
   aws-sqs-queue-name-prefix: {{.aws.sqs.namePrefix}}

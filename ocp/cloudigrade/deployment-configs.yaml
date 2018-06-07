@@ -106,6 +106,31 @@ spec:
             configMapKeyRef:
               key: django-debug
               name: {{.name}}
+        - name: HOUNDIGRADE_ECS_CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-cluster-name
+              name: {{.name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-name
+              name: {{.name}}
+        - name: HOUNDIGRADE_ECS_FAMILY_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-family-name
+              name: {{.name}}
+        - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-availability-zone
+              name: {{.name}}
+        - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-autoscaling-group-name
+              name: {{.name}}
         image: ' '
         imagePullPolicy: Always
         resources:
@@ -289,6 +314,31 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: django-debug
+              name: {{.name}}
+        - name: HOUNDIGRADE_ECS_CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-cluster-name
+              name: {{.name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-name
+              name: {{.name}}
+        - name: HOUNDIGRADE_ECS_FAMILY_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-family-name
+              name: {{.name}}
+        - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-availability-zone
+              name: {{.name}}
+        - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-autoscaling-group-name
               name: {{.name}}
         image: ' '
         imagePullPolicy: Always
