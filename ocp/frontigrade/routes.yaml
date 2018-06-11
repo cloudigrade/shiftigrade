@@ -6,8 +6,8 @@ metadata:
   labels:
     deployment: {{.name}}-deployment
 spec:
-  host: {{.frontigrade.routeHost}}
-  path: {{.frontigrade.routePath}}
+  host: {{env "FRONTIGRADE_ROUTE_HOST" | default .frontigrade.routeHost}}
+  path: {{env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath}}
   port:
     targetPort: {{.name}}
   to:

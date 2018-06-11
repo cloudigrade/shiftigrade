@@ -6,8 +6,8 @@ metadata:
   labels:
     deployment: {{.name}}-deployment
 spec:
-  host: {{.api.routeHost}}
-  path: {{.api.routePath}}
+  host: {{env "API_ROUTE_HOST" | default .api.routeHost}}
+  path: {{env "API_ROUTE_PATH" | default .api.routePath}}
   port:
     targetPort: nginx
   to:
@@ -23,8 +23,8 @@ metadata:
   labels:
     deployment: {{.name}}-deployment
 spec:
-  host: {{.auth.routeHost}}
-  path: {{.auth.routePath}}
+  host: {{env "AUTH_ROUTE_HOST" | default .auth.routeHost}}
+  path: {{env "AUTH_ROUTE_PATH" | default .auth.routePath}}
   port:
     targetPort: nginx
   to:
