@@ -21,7 +21,7 @@ data:
   aws-name-prefix: {{env "USER" | printf "%s-" | quote}}
 {{end}}
   django-allowed-hosts: {{.django.allowedHosts | quote}}
-  django-database-host: {{.db.databaseHost}}
+  django-database-host: {{env "DJANGO_DATABASE_HOST" | default .db.databaseHost}}
   django-debug: {{.django.debug | quote}}
   django-settings-module: {{.django.settingsModule}}
 type: Opaque
