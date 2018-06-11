@@ -35,5 +35,4 @@ spec:
         from:
           kind: ImageStreamTag
           name: "{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}"
-          namespace: {{.namespace}}
     - type: ConfigChange

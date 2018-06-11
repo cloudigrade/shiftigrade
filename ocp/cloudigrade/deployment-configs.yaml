@@ -211,7 +211,6 @@ spec:
         from:
           kind: ImageStreamTag
           name: {{.api.imageStreamName}}:{{.api.imageStreamTag}}
-          namespace: {{.namespace}}
     - type: ImageChange
       imageChangeParams:
         automatic: {{.nginx.enableImageChangeTrigger}}
@@ -220,7 +219,6 @@ spec:
         from:
           kind: ImageStreamTag
           name: {{.nginx.imageStreamName}}:{{.nginx.imageStreamTag}}
-          namespace: {{.namespace}}
     - type: ConfigChange
 ---
 kind: DeploymentConfig
@@ -399,5 +397,4 @@ spec:
         from:
           kind: ImageStreamTag
           name: {{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
-          namespace: {{.namespace}}
     - type: ConfigChange
