@@ -13,7 +13,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: {{.nginx.imageStreamName}}:{{.nginx.imageStreamTag}}
+      name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.nginx.imageStreamName}}:{{.nginx.imageStreamTag}}
   runPolicy: Serial
   source:
     contextDir: {{.nginx.repoContextDir}}
@@ -59,7 +59,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: {{.api.imageStreamName}}:{{.api.imageStreamTag}}
+      name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.api.imageStreamName}}:{{.api.imageStreamTag}}
   triggers:
   {{if ne .env "local"}}
   - github:

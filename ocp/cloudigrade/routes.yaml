@@ -12,7 +12,7 @@ spec:
   host: {{env "API_ROUTE_HOST" | default .api.routeHost}}
   path: {{env "API_ROUTE_PATH" | default .api.routePath}}
   port:
-    targetPort: nginx
+    targetPort: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}nginx
   to:
     kind: Service
     name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
@@ -32,7 +32,7 @@ spec:
   host: {{env "AUTH_ROUTE_HOST" | default .auth.routeHost}}
   path: {{env "AUTH_ROUTE_PATH" | default .auth.routePath}}
   port:
-    targetPort: nginx
+    targetPort: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}nginx
   to:
     kind: Service
     name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api

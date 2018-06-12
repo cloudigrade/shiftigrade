@@ -12,7 +12,7 @@ spec:
   host: {{env "FRONTIGRADE_ROUTE_HOST" | default .frontigrade.routeHost}}
   path: {{env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath}}
   port:
-    targetPort: {{.name}}
+    targetPort: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
   to:
     kind: Service
     name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
