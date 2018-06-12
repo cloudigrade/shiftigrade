@@ -5,6 +5,9 @@ metadata:
   name: {{.name}}-nginx
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 spec:
   failedBuildsHistoryLimit: 5
   output:
@@ -40,6 +43,9 @@ metadata:
   name: {{.name}}-api
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 spec:
   failedBuildsHistoryLimit: 5
   runPolicy: Serial

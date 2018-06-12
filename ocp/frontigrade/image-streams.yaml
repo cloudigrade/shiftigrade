@@ -5,3 +5,6 @@ metadata:
   name: {{.frontigrade.imageStreamName}}
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}

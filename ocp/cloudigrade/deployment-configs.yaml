@@ -5,6 +5,9 @@ metadata:
   name: {{.name}}-api
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 spec:
   selector:
     name: {{.name}}-api
@@ -227,6 +230,9 @@ metadata:
   name: {{.name}}-celery
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 spec:
 spec:
   selector:

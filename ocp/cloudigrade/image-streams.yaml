@@ -5,6 +5,9 @@ metadata:
   name: {{.nginx.imageStreamName}}
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 ---
 kind: ImageStream
 apiVersion: v1
@@ -12,3 +15,6 @@ metadata:
   name: {{.api.imageStreamName}}
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}

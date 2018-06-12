@@ -5,6 +5,9 @@ metadata:
   name: {{.name}}
   labels:
     deployment: {{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 data:
   aws-default-region: {{.aws.defaultRegion}}
   aws-houndigrade-ecs-cluster-name: {{env "HOUNDIGRADE_ECS_CLUSTER_NAME" | default .aws.houndigrade.ecs.clusterName}}
