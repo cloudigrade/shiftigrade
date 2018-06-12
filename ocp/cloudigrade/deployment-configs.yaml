@@ -88,7 +88,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{.db.secretsFileName}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
@@ -98,12 +98,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{.db.secretsFileName}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{.db.secretsFileName}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
@@ -303,7 +303,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{.db.secretsFileName}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
@@ -313,12 +313,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{.db.secretsFileName}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{.db.secretsFileName}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
