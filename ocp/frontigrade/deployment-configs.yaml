@@ -34,7 +34,7 @@ spec:
       imageChangeParams:
         automatic: {{.frontigrade.enableImageChangeTrigger}}
         containerNames:
-          - {{.name}}
+          - {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         from:
           kind: ImageStreamTag
           name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}

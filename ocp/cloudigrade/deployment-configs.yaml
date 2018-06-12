@@ -399,8 +399,8 @@ spec:
       imageChangeParams:
         automatic: {{.celery.enableImageChangeTrigger}}
         containerNames:
-          - {{.name}}-celery
+          - {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-celery
         from:
           kind: ImageStreamTag
-          name: {{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
+          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
     - type: ConfigChange
