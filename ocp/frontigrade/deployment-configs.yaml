@@ -2,15 +2,15 @@
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{.name}}
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
   labels:
-    deployment: {{.name}}-deployment
+    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
   selector:
-    name: {{.name}}
+    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
   replicas: 1
   revisionHistoryLimit: 10
   strategy:
@@ -18,10 +18,10 @@ spec:
   template:
     metadata:
       labels:
-        name: {{.name}}
+        name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
     spec:
       containers:
-      - name: {{.name}}
+      - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         image: ' '
         resources:
           limits:
@@ -37,5 +37,5 @@ spec:
           - {{.name}}
         from:
           kind: ImageStreamTag
-          name: "{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}"
+          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
     - type: ConfigChange

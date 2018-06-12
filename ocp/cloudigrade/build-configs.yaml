@@ -2,9 +2,9 @@
 kind: BuildConfig
 apiVersion: v1
 metadata:
-  name: {{.name}}-nginx
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}{{end}}{{.name}}-nginx
   labels:
-    deployment: {{.name}}-deployment
+    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
@@ -40,9 +40,9 @@ spec:
 kind: BuildConfig
 apiVersion: v1
 metadata:
-  name: {{.name}}-api
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
   labels:
-    deployment: {{.name}}-deployment
+    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}

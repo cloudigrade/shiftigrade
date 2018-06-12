@@ -2,9 +2,9 @@
 kind: BuildConfig
 apiVersion: v1
 metadata:
-  name: {{.name}}
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
   labels:
-    deployment: {{.name}}-deployment
+    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
@@ -19,7 +19,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: {{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
+      name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
   strategy:
     type: Docker
   triggers:

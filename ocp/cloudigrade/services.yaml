@@ -2,17 +2,17 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{.name}}-api
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
   labels:
-    deployment: {{.name}}-deployment
+    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
   selector:
-    name: {{.name}}-api
+    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
   ports:
-  - name: nginx
+  - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}nginx
     port: 80
     protocol: TCP
     targetPort: {{.nginx.port}}

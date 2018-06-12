@@ -2,9 +2,9 @@
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{.name}}-api
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
   labels:
-    deployment: {{.name}}-deployment
+    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
@@ -15,16 +15,16 @@ spec:
     targetPort: nginx
   to:
     kind: Service
-    name: {{.name}}-api
+    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
     weight: 100
   wildcardPolicy: None
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{.name}}-auth
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-auth
   labels:
-    deployment: {{.name}}-deployment
+    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
@@ -35,6 +35,6 @@ spec:
     targetPort: nginx
   to:
     kind: Service
-    name: {{.name}}-api
+    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
     weight: 100
   wildcardPolicy: None
