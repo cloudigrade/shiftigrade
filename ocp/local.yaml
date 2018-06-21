@@ -50,6 +50,7 @@ include:
             familyName: Houndigrade
           availabilityZone: us-east-1a
           autoscalingGroupName:
+          scaleUpClusterSchedule: 300
       django:
         debug: true
         allowedHosts: "*"

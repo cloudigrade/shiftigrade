@@ -340,6 +340,11 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
               name: {{.name}}
+        - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-scale-up-cluster-schedule
+              name: {{.name}}
         image: ' '
         imagePullPolicy: Always
         command:
