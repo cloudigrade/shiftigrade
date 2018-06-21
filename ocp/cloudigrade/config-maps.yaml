@@ -12,7 +12,7 @@ data:
   aws-houndigrade-ecs-family-name: {{env "HOUNDIGRADE_ECS_FAMILY_NAME" | default .aws.houndigrade.ecs.familyName}}
   aws-houndigrade-availability-zone: {{env "HOUNDIGRADE_AWS_AVAILABILITY_ZONE" | default .aws.houndigrade.availabilityZone}}
   aws-houndigrade-autoscaling-group-name: {{env "HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME" | default .aws.houndigrade.autoscalingGroupName}}
-  aws-houndigrade-scale-up-cluster-schedule: {{env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | toString}}
+  aws-houndigrade-scale-up-cluster-schedule: {{env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
 {{if ne .env "local"}}
   aws-sqs-queue-name-prefix: {{.aws.sqs.namePrefix}}
