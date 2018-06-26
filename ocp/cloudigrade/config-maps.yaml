@@ -15,9 +15,9 @@ data:
   aws-houndigrade-scale-up-cluster-schedule: {{env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
 {{if ne .env "local"}}
-  aws-sqs-queue-name-prefix: {{.aws.sqs.namePrefix}}
+  aws-name-prefix: {{.aws.sqs.namePrefix}}
 {{else}}
-  aws-sqs-queue-name-prefix: {{env "USER" | printf "%s-" | quote}}
+  aws-name-prefix: {{env "USER" | printf "%s-" | quote}}
 {{end}}
   django-allowed-hosts: {{.django.allowedHosts | quote}}
   django-database-host: {{.db.databaseHost}}

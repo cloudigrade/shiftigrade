@@ -61,10 +61,10 @@ spec:
             configMapKeyRef:
               key: aws-sqs-region
               name: {{.name}}
-        - name: AWS_SQS_QUEUE_NAME_PREFIX
+        - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
-              key: aws-sqs-queue-name-prefix
+              key: aws-name-prefix
               name: {{.name}}
         - name: DJANGO_SETTINGS_MODULE
           valueFrom:
@@ -270,10 +270,10 @@ spec:
             configMapKeyRef:
               key: aws-sqs-region
               name: {{.name}}
-        - name: AWS_SQS_QUEUE_NAME_PREFIX
+        - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
-              key: aws-sqs-queue-name-prefix
+              key: aws-name-prefix
               name: {{.name}}
         - name: DJANGO_SETTINGS_MODULE
           valueFrom:
