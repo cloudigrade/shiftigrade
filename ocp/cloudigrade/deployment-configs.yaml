@@ -131,6 +131,11 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
               name: {{.name}}
+        - name: CLOUDTRAIL_EVENT_URL
+          valueFrom:
+            configMapKeyRef:
+              key: aws-cloudtrail-event-url
+              name: {{.name}}
         image: ' '
         imagePullPolicy: Always
         resources:
@@ -345,6 +350,11 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
               name: {{.name}}
+        - name: CLOUDTRAIL_EVENT_URL
+          valueFrom:
+            configMapKeyRef:
+              key: aws-cloudtrail-event-url
+              name: {{.name}}
         image: ' '
         imagePullPolicy: Always
         command:
@@ -354,7 +364,7 @@ spec:
             PYTHONPATH=. scl enable rh-postgresql96 rh-python36 --
             celery -l info -A config worker --beat
             --scheduler django_celery_beat.schedulers:DatabaseScheduler
-            -Q copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster
+            -Q copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster,analyze_log
         resources:
           limits:
             memory: {{.celery.memoryLimit}}

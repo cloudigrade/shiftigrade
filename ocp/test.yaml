@@ -54,6 +54,7 @@ include:
           availabilityZone: us-east-1a
           autoscalingGroupName: EC2ContainerService-cloudigrade-test-us-east-1a-EcsInstanceAsg-N1MWE3Y628WK
           scaleUpClusterSchedule: 3600
+        cloudtrailEventUrl:
       django:
         debug: true
         allowedHosts: '*'

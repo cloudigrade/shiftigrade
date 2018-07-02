@@ -14,6 +14,7 @@ data:
   aws-houndigrade-autoscaling-group-name: {{env "HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME" | default .aws.houndigrade.autoscalingGroupName}}
   aws-houndigrade-scale-up-cluster-schedule: {{env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
+  aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
 {{if ne .env "local"}}
   aws-name-prefix: {{.aws.sqs.namePrefix}}
 {{else}}
