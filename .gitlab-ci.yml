@@ -1,0 +1,22 @@
+image: registry.gitlab.com/xyzzy.sh/deploy-container:latest
+
+Test Templates:
+  stage: test
+  except:
+    - master
+    - tags
+  before_script:
+    - oc login https://api.insights.openshift.com --token=$OC_QE_TOKEN
+  script:
+    - kontemplate template ocp/local.yaml | oc apply --dry-run -f -
+    - kontemplate template ocp/test.yaml | oc apply --dry-run -f -
+
+Deploy Test Environment:
+  stage: deploy
+  only:
+    - master
+    - tags
+  before_script:
+    - oc login https://api.insights.openshift.com --token=$OC_TEST_TOKEN
+  script:
+    - kontemplate template ocp/test.yaml | oc apply -f -
