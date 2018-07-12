@@ -2,7 +2,7 @@
 kind: BuildConfig
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}{{end}}{{.name}}-nginx
+  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-nginx
   labels:
     deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
