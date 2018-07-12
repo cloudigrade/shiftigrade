@@ -9,7 +9,7 @@ include:
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
       api:
         enableImageChangeTrigger: true
-        repoUri: https://github.com/cloudigrade/cloudigrade.git
+        repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
         repoUriBranch: master
         imageStreamName: cloudigrade
         imageStreamTag: latest
@@ -21,7 +21,7 @@ include:
         routePath: /auth/
       nginx:
         enableImageChangeTrigger: true
-        repoUri: https://github.com/cloudigrade/cloudigrade.git
+        repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
         repoUriBranch: master
         repoContextDir: deployment/
         baseImage: centos/nginx-112-centos7:latest
@@ -65,7 +65,7 @@ include:
       name: frontigrade
       frontigrade:
         enableImageChangeTrigger: true
-        repoUri: https://github.com/cloudigrade/frontigrade.git
+        repoUri: https://gitlab.com/cloudigrade/frontigrade.git
         repoUriBranch: master
         imageStreamName: frontigrade
         imageStreamTag: latest
