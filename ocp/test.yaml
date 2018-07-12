@@ -15,7 +15,7 @@ include:
         repoUriBranch: master
         imageStreamName: cloudigrade
         imageStreamTag: latest
-        memoryLimit: 512Mi
+        memoryLimit: 1Gi
         routeHost: test.cloudigra.de
         routePath: /api/v1/
       auth:
