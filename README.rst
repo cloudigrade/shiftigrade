@@ -32,12 +32,11 @@ We encourage macOS developers to use `homebrew <https://brew.sh/>`_ to install a
 
 After installing Docker, open it, navigate to Preferences -> General and uncheck ``Automatically check for updates`` if it is checked, then navigate to Preferences -> Daemon. There add ``172.30.0.0/16`` to the list of insecure registries, then click ``Apply and Restart``.
 
-We currently use Openshift 3.7.X in production, so we need a matching openshift client.
+We currently use Openshift 3.9.X in production, so we need a matching openshift client.
 
 .. code-block:: bash
 
-    brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/9d190ab350ce0b0d00d4968fed4b9fbe68a318ef/Formula/openshift-cli.rb
-    brew pin openshift-cli
+    brew install openshift-cli
 
 Linux dependencies
 ~~~~~~~~~~~~~~~~~~
@@ -49,9 +48,9 @@ We recommend developing on the latest version of Fedora. Follow the following co
     # DNF Install AWS-CLI, Docker, and gettext
     sudo dnf install docker -y
     # Install an appropriate version of the OpenShift Client
-    wget -O oc.tar.gz https://github.com/openshift/origin/releases/download/v3.7.2/openshift-origin-client-tools-v3.7.2-282e43f-linux-64bit.tar.gz
+    wget -O oc.tar.gz https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
     tar -zxvf oc.tar.gz
-    cp openshift-origin-client-tools-v3.7.2-282e43f-linux-64bit/oc ~/bin
+    cp openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc ~/bin
     # Allow interaction with Docker without root
     sudo groupadd docker && sudo gpasswd -a ${USER} docker
     newgrp docker
@@ -136,7 +135,7 @@ If you'd like to start the cluster, and deploy Cloudigrade along with supporting
     # AWS_SECRET_ACCESS_KEY set in your environment or the deployment will fail
     make oc-up-all
 
-This will create the **ImageStream** to track **PostgreSQL:9.6**, deploy **PostgreSQL** locally, and finally use the templates to create all the objects necessary to deploy **cloudigrade** and the supporting services. There is a chance that the deployment for **cloudigrade** will fail due to the db not being ready before the mid-deployment hook pod is being run. Simply run the following command to trigger a redemployment for **cloudigrade**:
+This will deploy **PostgreSQL** locally, and finally use the templates to create all the objects necessary to deploy **cloudigrade** and the supporting services. There is a chance that the deployment for **cloudigrade** will fail due to the db not being ready before the mid-deployment hook pod is being run. Simply run the following command to trigger a redemployment for **cloudigrade**:
 
 .. code-block:: bash
 
@@ -156,7 +155,7 @@ If you'd like to remove all your saved settings for your cluster, you can run th
 
     make oc-clean
 
-There are also other make targets available to deploy just the queue, db, or the project by itself, along with installing the templates and the ImageStream object.
+There are also other make targets available to deploy just the queue, db, or the project by itself, along with installing the templates.
 
 
 Testing

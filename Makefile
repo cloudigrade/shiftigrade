@@ -4,8 +4,9 @@ TOPDIR		= $(shell pwd)
 PYDIR		= cloudigrade
 
 OC_SOURCE	= registry.access.redhat.com/openshift3/ose
-OC_VERSION	= v3.7.23
+OC_VERSION	= v3.9.31
 OC_DATA_DIR	= ${HOME}/.oc/openshift.local.data
+OC_IS_OS	= rhel7
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
@@ -27,7 +28,6 @@ help:
 	@echo "  oc-down                       to stop the local OpenShift cluster."
 	@echo "  oc-clean                      to stop the local OpenShift cluster and delete configuration."
 	@echo "==[OpenShift/Deployment Shortcuts]==================================="
-	@echo "  oc-add-imagestream            to create the ImageStream Tag for PostgreSQL."
 	@echo "  oc-deploy-db                  to create and deploy the DB."
 	@echo "  oc-create-cloudigrade-all     to create and deploy the cloudigrade and frontigrade."
 	@echo "  oc-create-cloudigrade-api     to create and deploy the cloudigrade. "
@@ -53,18 +53,16 @@ oc-up:
 	oc cluster up \
 		--image=$(OC_SOURCE) \
 		--version=$(OC_VERSION) \
+		--image-streams=$(OC_IS_OS) \
 		--host-data-dir=$(OC_DATA_DIR) \
 		--use-existing-config
 ifeq ($(OS),Linux)
 	make oc-login-developer
 endif
 
-oc-add-imagestream:
-	oc create istag postgresql:9.6 --from-image=centos/postgresql-96-centos7
-
 oc-deploy-db:
 	oc process openshift//postgresql-persistent \
-		-p NAMESPACE=myproject \
+		-p NAMESPACE=openshift \
 		-p POSTGRESQL_USER=postgres \
 		-p POSTGRESQL_PASSWORD=postgres \
 		-p POSTGRESQL_DATABASE=postgres \
@@ -87,9 +85,9 @@ oc-forward-ports:
 oc-stop-forwarding-ports:
 	kill -HUP $$(ps -eo pid,command | grep "oc port-forward" | grep -v grep | awk '{print $$1}')
 
-oc-up-dev: oc-up oc-add-imagestream oc-deploy-db
+oc-up-dev: oc-up oc-deploy-db
 
-oc-up-all: oc-up sleep-60 oc-add-imagestream oc-deploy-db sleep-30 oc-create-cloudigrade-all
+oc-up-all: oc-up sleep-60 oc-deploy-db sleep-30 oc-create-cloudigrade-all
 
 oc-down:
 	oc cluster down
