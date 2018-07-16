@@ -1,0 +1,18 @@
+galaxy_info:
+  author:
+    - Daniel Rhoades
+    - Elijah DeLee @kdelee
+  description: Ansible role for simplifying the provisioning and decommissioning of Auto-Scaling ECS clusters within an AWS account
+  license: MIT
+  min_ansible_version: 2.1
+
+  platforms: []
+
+  galaxy_tags:
+    - aws
+    - ec2
+    - ecs
+    - autoscaling
+    - cluster
+
+dependencies: []

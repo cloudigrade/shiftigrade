@@ -1,0 +1,59 @@
+---
+# tasks file for aws-cloudigrade-cloudtrail
+
+# Check pre-requisites
+- include: pre-requisites.yaml
+
+- name: Create sqs queue
+  sqs_queue:
+    name: "{{ sqs_name }}"
+    region: "{{ aws_region }}"
+  register: queue
+  when: sqs_state == "present"
+
+- name: print out return value
+  debug:
+    msg: "{{ queue }}"
+  when: verbose == "true" and sqs_state == "present"
+
+- name: print out sqs_policy
+  debug:
+    msg: "{{ sqs_policy }}"
+  when: verbose == "true" and state == "present"
+
+- name: print out bucket_policy
+  debug:
+    msg: "{{ bucket_policy }}"
+  when: verbose == "true" and state == "present"
+
+- name: "Create bucket with policy"
+  s3_bucket:
+    name: "{{ bucket_name }}"
+    policy: "{{ bucket_policy }}"
+  when: bucket_state == "present"
+
+- name: Modify policy of queue
+  sqs_queue:
+    name: "{{ sqs_name }}"
+    region: "{{ aws_region }}"
+    policy: "{{ sqs_policy }}"
+  when: sqs_state == "present" and bucket_state == "present"
+
+- name: Create notification for s3 bucket
+  script: "create-notification.py --bucket {{ bucket_name }} --queue {{ queue.queue_arn }}"
+  when: sqs_state == "present" and bucket_state == "present"
+
+
+- name: delete bucket
+  s3_bucket:
+    name: "{{ bucket_name }}"
+    force: yes
+    state: absent
+  when: bucket_state == "absent"
+
+- name: Delete sqs queue
+  sqs_queue:
+    name: "{{ sqs_name }}"
+    region: "{{ aws_region }}"
+    state: absent
+  when: sqs_state == "absent"

@@ -11,6 +11,17 @@ Test Templates:
     - kontemplate template ocp/local.yaml | oc apply --dry-run -f -
     - kontemplate template ocp/test.yaml | oc apply --dry-run -f -
 
+Test Ansible Playbooks:
+  image: python:latest
+  stage: test
+  except:
+    - master
+    - tags
+  before_script:
+    - pip install ansible
+  script:
+    - ansible-playbook --syntax-check ansible/*.yaml
+
 Deploy Test Environment:
   stage: deploy
   only:
