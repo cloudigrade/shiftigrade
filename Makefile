@@ -68,6 +68,7 @@ oc-deploy-db:
 		-p POSTGRESQL_DATABASE=postgres \
 		-p POSTGRESQL_VERSION=9.6 \
 	| oc create -f -
+	oc rollout status dc/postgresql
 
 oc-create-cloudigrade-api:
 	kontemplate template ocp/local.yaml	-i cloudigrade | oc apply -f -
@@ -85,9 +86,9 @@ oc-forward-ports:
 oc-stop-forwarding-ports:
 	kill -HUP $$(ps -eo pid,command | grep "oc port-forward" | grep -v grep | awk '{print $$1}')
 
-oc-up-dev: oc-up oc-deploy-db
+oc-up-dev: oc-up sleep-60 oc-deploy-db
 
-oc-up-all: oc-up sleep-60 oc-deploy-db sleep-30 oc-create-cloudigrade-all
+oc-up-all: oc-up sleep-60 oc-deploy-db oc-create-cloudigrade-all
 
 oc-down:
 	oc cluster down
@@ -105,7 +106,3 @@ oc-user-authenticate:
 sleep-60:
 	@echo "Allow the cluster to startup and set all internal services up."
 	sleep 60
-
-sleep-30:
-	@echo "Allow the DB to start before deploying cloudigrade."
-	sleep 30
