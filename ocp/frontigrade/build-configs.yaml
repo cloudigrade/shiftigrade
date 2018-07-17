@@ -24,9 +24,9 @@ spec:
     type: Docker
   triggers:
   {{if ne .env "local"}}
-  - github:
-      secret: {{env "GITHUB_SECRET_TOKEN" | default .github.secretToken | default (randAlphaNum 16)}}
-    type: GitHub
+  - gitlab:
+      secret: {{env "GITLAB_SECRET_TOKEN" | default .gitlab.secretToken | default (randAlphaNum 16)}}
+    type: GitLab
   {{end}}
   - type: ConfigChange
   - imageChange: {}

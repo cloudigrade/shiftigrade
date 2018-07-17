@@ -7,7 +7,7 @@ include:
     values:
       name: cloudigrade
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
-      github:
+      gitlab:
         secretToken:
       api:
         enableImageChangeTrigger: true
@@ -66,7 +66,7 @@ include:
   - name: frontigrade
     values:
       name: frontigrade
-      github:
+      gitlab:
         secretToken:
       frontigrade:
         enableImageChangeTrigger: true
