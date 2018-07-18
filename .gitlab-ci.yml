@@ -1,4 +1,4 @@
-image: registry.gitlab.com/xyzzy.sh/deploy-container:latest
+image: registry.gitlab.com/cloudigrade/images/deploy-container:latest
 
 Test Templates:
   stage: test
