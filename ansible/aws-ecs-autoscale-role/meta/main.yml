@@ -4,7 +4,7 @@ galaxy_info:
     - Elijah DeLee @kdelee
   description: Ansible role for simplifying the provisioning and decommissioning of Auto-Scaling ECS clusters within an AWS account
   license: MIT
-  min_ansible_version: 2.1
+  min_ansible_version: 2.5.1
 
   platforms: []
 

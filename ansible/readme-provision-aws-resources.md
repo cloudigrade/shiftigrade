@@ -2,7 +2,7 @@
 
 This is an automated workflow to the manual workflows described in [dev-houndigrade-cluster-setup.md](https://gitlab.com/cloudigrade/cloudigrade/blob/master/docs/dev-houndigrade-cluster-setup.md) and [dev-cloudtrail-initial-setup.rst](https://gitlab.com/cloudigrade/cloudigrade/blob/master/docs/dev-cloudtrail-initial-setup.rst).
 
-## Assumptions + Dependencies
+## Assumptions and Dependencies
 
 * Python executable in path must have boto3 importable
 * Must have AWS key and id in env for acct acting as cloudigrade
@@ -10,7 +10,7 @@ This is an automated workflow to the manual workflows described in [dev-houndigr
   * `AWS_SECRET_ACCESS_KEY`
 * Must have ssh key created on aws account and know the name
 * Must have recorded what vpc, subnet, and security group you want to use are (details below)
-* Must have ansible, ansible-galaxy, and ansible-playbook in your path. Preferebly version 2.5.1+
+* Must have ansible and ansible-playbook in your path. Preferebly version 2.5.1+
 * Must have aws cli in path
 * Host running the playbook must have `/etc/ansible/` directory and permission to write to it. This probably won't be an issue if you are using your system's `ansible`, probably will be an issue if using a virutal env install of `ansible`.
 
@@ -128,4 +128,24 @@ aws s3 ls | grep $AWS_NAME_PREFIX
 
 # show no queue 
 aws sqs list-queues | grep "${AWS_NAME_PREFIX}-cloudigrade-cloudtrail-sqs"
+```
+
+
+### SQS Cleanup
+_Additional sqs queues are created by cloudigrade when it runs, so we may want to purge these queues or tear them down._
+
+To purge all queues of messages used by a cloudigrade instance, you can use the
+`aws-clean-sqs` role. By default, it only purges the messages but preserves the
+queues. Again, the conditions listed in [Assumptions and Dependencies](#assumptions-and-dependencies) must be met to use this role.
+
+To purge queues:
+
+```
+ansible-playbook -e aws_prefix=$AWS_NAME_PREFIX clean-sqs.yaml
+```
+
+To DELETE all queues (if completely destroying an environment):
+
+```
+ansible-playbook -e aws_prefix=$AWS_NAME_PREFIX -e sqs_state=absent clean-sqs.yaml
 ```

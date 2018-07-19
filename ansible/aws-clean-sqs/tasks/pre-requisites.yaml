@@ -1,0 +1,7 @@
+- name: "AWS | Check that prefix to use to create names has been defined"
+  fail: msg="You must specify the prefix for the bucket and queue with aws_prefix"
+  when: aws_prefix is undefined
+
+- name: "AWS | Check that aws region has been defined"
+  fail: msg="You must specify the region for the s3 bucket with aws_region"
+  when: aws_region is undefined

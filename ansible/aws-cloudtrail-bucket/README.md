@@ -1,5 +1,5 @@
 aws-cloudtrail-bucket
-=========
+=====================
 
 This role can create and delete the s3 bucket and sqs queue needed to allow
 cloudtrail to post events to an s3 bucket and send notifications to a queue to

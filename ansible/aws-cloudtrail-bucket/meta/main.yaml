@@ -1,10 +1,10 @@
 galaxy_info:
   author: Elijah DeLee
-  description: Quality Engineer
+  description: 'Set up an AWS s3 bucket with permissions to let CloudTrail write to it, and send notifications to a SQS queue on any "write" event.'
   company: Red Hat
 
   license: GPLv3
 
-  min_ansible_version: 1.2
+  min_ansible_version: 2.5.1
 
   galaxy_tags: []
