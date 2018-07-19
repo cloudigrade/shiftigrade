@@ -25,6 +25,7 @@ help:
 	@echo "  oc-up                         to start the local OpenShift cluster."
 	@echo "  oc-up-dev                     to start the local OpenShift cluster and deploy the db."
 	@echo "  oc-up-all                     to start the cluster and deploy supporting services along with cloudigrade."
+	@echo "  oc-check-cluster              to check the cluster status."
 	@echo "  oc-down                       to stop the local OpenShift cluster."
 	@echo "  oc-clean                      to stop the local OpenShift cluster and delete configuration."
 	@echo "==[OpenShift/Deployment Shortcuts]==================================="
@@ -86,9 +87,9 @@ oc-forward-ports:
 oc-stop-forwarding-ports:
 	kill -HUP $$(ps -eo pid,command | grep "oc port-forward" | grep -v grep | awk '{print $$1}')
 
-oc-up-dev: oc-up sleep-60 oc-deploy-db
+oc-up-dev: oc-up oc-check-cluster oc-deploy-db
 
-oc-up-all: oc-up sleep-60 oc-deploy-db oc-create-cloudigrade-all
+oc-up-all: oc-up oc-check-cluster oc-deploy-db oc-create-cloudigrade-all
 
 oc-down:
 	oc cluster down
@@ -103,6 +104,5 @@ oc-user-authenticate:
 	@read -p "User name: " uname; \
 	oc rsh -c cloudigrade-api $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=cloudigrade-api) scl enable rh-postgresql96 rh-python36 -- python manage.py drf_create_token $$uname
 
-sleep-60:
-	@echo "Allow the cluster to startup and set all internal services up."
-	sleep 60
+oc-check-cluster:
+	while true; do oc cluster status > /dev/null; if [ $$? == "0" ]; then echo "Cluster is up!"; break; fi; echo "Waiting for cluster to start up..."; sleep 5; done;
