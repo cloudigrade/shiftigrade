@@ -113,32 +113,32 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-cluster-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_ECS_IMAGE_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-family-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-availability-zone
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         image: ' '
         imagePullPolicy: Always
         resources:
@@ -328,37 +328,37 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-cluster-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_ECS_IMAGE_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-family-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-availability-zone
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
-              name: {{.name}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         image: ' '
         imagePullPolicy: Always
         command:
