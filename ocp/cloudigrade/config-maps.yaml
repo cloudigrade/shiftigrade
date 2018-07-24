@@ -21,7 +21,7 @@ data:
 {{if ne .env "local"}}
   aws-name-prefix: {{.aws.sqs.namePrefix}}
 {{else}}
-  aws-name-prefix: {{env "USER" | printf "%s-" | quote}}
+  aws-name-prefix: {{if (env "AWS_NAME_PREFIX")}}{{env "AWS_NAME_PREFIX"}}{{else}}{{ env "USER"}}{{end}}-
 {{end}}
   django-allowed-hosts: {{.django.allowedHosts | quote}}
   django-database-host: {{env "DJANGO_DATABASE_HOST" | default .db.databaseHost}}
