@@ -36,9 +36,8 @@ if __name__ == '__main__':
         '--delete',
         required=False,
         default=False,
-        action='store',
+        action='store_true',
         dest='delete_q',
-        type=bool,
         help=('Instead of only purging messages, delete the queues.')
     )
     args = parser.parse_args()
