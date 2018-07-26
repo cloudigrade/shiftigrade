@@ -19,9 +19,9 @@ data:
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
   aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
 {{if ne .env "local"}}
-  aws-name-prefix: {{.aws.sqs.namePrefix}}
+  aws-name-prefix:  {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | printf "%s-" | quote}}{{else}}{{.aws.sqs.namePrefix}}{{end}}
 {{else}}
-  aws-name-prefix: {{if (env "AWS_NAME_PREFIX")}}{{env "AWS_NAME_PREFIX" | printf "%s-" | quote}}{{else}}{{ env "USER" | printf "%s-" | quote}}{{end}}
+  aws-name-prefix: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | printf "%s-" | quote}}{{else}}{{ env "USER" | printf "%s-" | quote}}{{end}}
 {{end}}
   django-allowed-hosts: {{.django.allowedHosts | quote}}
   django-database-host: {{env "DJANGO_DATABASE_HOST" | default .db.databaseHost}}

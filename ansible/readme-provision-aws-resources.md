@@ -27,8 +27,8 @@ _Locally, you might want to just use your user name._
 _In a CI context, a git branch may be appropriate._
 
 ```
-export AWS_NAME_PREFIX="${USER}-awesome-feature"
-export HOUNDIGRADE_ECS_CLUSTER_NAME="${AWS_NAME_PREFIX}-houndigrade"
+export DEPLOYMENT_PREFIX="${USER}-awesome-feature"
+export HOUNDIGRADE_ECS_CLUSTER_NAME="${DEPLOYMENT_PREFIX}-houndigrade"
 export HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME="${HOUNDIGRADE_ECS_CLUSTER_NAME}-asg"
 export HOUNDIGRADE_LAUNCH_CONFIG_NAME="${HOUNDIGRADE_ECS_CLUSTER_NAME}-lc"
 export EC2_HOST_NAME="${HOUNDIGRADE_ECS_CLUSTER_NAME}-host"
@@ -67,7 +67,7 @@ export SSH_KEY_NAME="cloudigrade-key"
 ## Run playbook
 _To be done in the same directory where you created the playbook._
 ```
-ansible-playbook -e ecs_cluster_name=$HOUNDIGRADE_ECS_CLUSTER_NAME -e ec2_asg_name=$HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME -e ec2_launch_configuration_name=$HOUNDIGRADE_LAUNCH_CONFIG_NAME -e ec2_instance_type=$INSTANCE_TYPE -e ec2_ami_id=$RECOMMENDED_AMI -e ec2_instance_name=$EC2_HOST_NAME -e ec2_asg_min_size=0 -e ec2_asg_max_size=0 -e ec2_asg_desired_capacity=0 -e ec2_asg_availability_zones=$HOUNDIGRADE_AWS_AVAILABILITY_ZONE -e vpc_name=$VPC_NAME -e ec2_asg_vpc_subnets=$SUBNET_NAME -e ec2_security_groups=$SECURITY_GROUP_NAME -e key_name=$SSH_KEY_NAME -e application_name=houndigrade -e aws_prefix=$AWS_NAME_PREFIX provision-aws-resources.yaml
+ansible-playbook -e ecs_cluster_name=$HOUNDIGRADE_ECS_CLUSTER_NAME -e ec2_asg_name=$HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME -e ec2_launch_configuration_name=$HOUNDIGRADE_LAUNCH_CONFIG_NAME -e ec2_instance_type=$INSTANCE_TYPE -e ec2_ami_id=$RECOMMENDED_AMI -e ec2_instance_name=$EC2_HOST_NAME -e ec2_asg_min_size=0 -e ec2_asg_max_size=0 -e ec2_asg_desired_capacity=0 -e ec2_asg_availability_zones=$HOUNDIGRADE_AWS_AVAILABILITY_ZONE -e vpc_name=$VPC_NAME -e ec2_asg_vpc_subnets=$SUBNET_NAME -e ec2_security_groups=$SECURITY_GROUP_NAME -e key_name=$SSH_KEY_NAME -e application_name=houndigrade -e aws_prefix=$DEPLOYMENT_PREFIX provision-aws-resources.yaml
 ```
 
 ## Observe Results
@@ -82,11 +82,11 @@ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names $HOUNDIG
 aws ecs list-clusters | grep $HOUNDIGRADE_ECS_CLUSTER_NAME
 
 # show s3 bucket
-aws s3 ls | grep $AWS_NAME_PREFIX
+aws s3 ls | grep $DEPLOYMENT_PREFIX
 # go to web UI to show policy and notifications ... would be good to find CLI way to confirm
 
 # show queue 
-aws sqs list-queues | grep "${AWS_NAME_PREFIX}-cloudigrade-cloudtrail-sqs"
+aws sqs list-queues | grep "${DEPLOYMENT_PREFIX}-cloudigrade-cloudtrail-sqs"
 # go to web UI to show policy ... would be good to find CLI way to confirm
 ```
 
@@ -107,7 +107,7 @@ Additionally you need to provide the URL for the SQS queue that the s3 bucket se
 # additionally, need to know the CLOUDTRAIL_EVENT_URL, which is the url for the sqs queue
 # that the s3 notification set up to send events to
 export AWS_ACCOUNT_NUMBER=$number_for_your_cloudigrade_aws_account
-export CLOUDTRAIL_EVENT_URL=	"https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_NUMBER}/${AWS_NAME_PREFIX}-cloudigrade-cloudtrail-sqs"
+export CLOUDTRAIL_EVENT_URL=	"https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_NUMBER}/${DEPLOYMENT_PREFIX}-cloudigrade-cloudtrail-sqs"
 make oc-create-cloudigrade-all
 oc start-build cloudigrade-api
 ```
@@ -117,17 +117,17 @@ _We can also tear down everything we made with the same roles._
 _This does not remove the ecsInstanceRole because that is a default role that Amazon provides and would interfere with other clusters that may also be using it._
 ```
 # Remove resources created
-ansible-playbook -e ecs_cluster_name=$HOUNDIGRADE_ECS_CLUSTER_NAME -e ec2_asg_name=$HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME -e ec2_launch_configuration_name=$HOUNDIGRADE_LAUNCH_CONFIG_NAME -e ecs_state=absent -e ec2_lc_state=absent -e ec2_asg_state=absent -e bucket_state=absent -e sqs_state=absent -e aws_prefix=$AWS_NAME_PREFIX provision-aws-resources.yaml
+ansible-playbook -e ecs_cluster_name=$HOUNDIGRADE_ECS_CLUSTER_NAME -e ec2_asg_name=$HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME -e ec2_launch_configuration_name=$HOUNDIGRADE_LAUNCH_CONFIG_NAME -e ecs_state=absent -e ec2_lc_state=absent -e ec2_asg_state=absent -e bucket_state=absent -e sqs_state=absent -e aws_prefix=$DEPLOYMENT_PREFIX provision-aws-resources.yaml
 
 # Show clean up
 # show no cluster
 aws ecs list-clusters | grep $HOUNDIGRADE_ECS_CLUSTER_NAME
 
 # show no s3 bucket
-aws s3 ls | grep $AWS_NAME_PREFIX
+aws s3 ls | grep $DEPLOYMENT_PREFIX
 
 # show no queue 
-aws sqs list-queues | grep "${AWS_NAME_PREFIX}-cloudigrade-cloudtrail-sqs"
+aws sqs list-queues | grep "${DEPLOYMENT_PREFIX}-cloudigrade-cloudtrail-sqs"
 ```
 
 
@@ -141,11 +141,11 @@ queues. Again, the conditions listed in [Assumptions and Dependencies](#assumpti
 To purge queues:
 
 ```
-ansible-playbook -e aws_prefix=$AWS_NAME_PREFIX clean-sqs.yaml
+ansible-playbook -e aws_prefix=$DEPLOYMENT_PREFIX clean-sqs.yaml
 ```
 
 To DELETE all queues (if completely destroying an environment):
 
 ```
-ansible-playbook -e aws_prefix=$AWS_NAME_PREFIX -e sqs_state=absent clean-sqs.yaml
+ansible-playbook -e aws_prefix=$DEPLOYMENT_PREFIX -e sqs_state=absent clean-sqs.yaml
 ```

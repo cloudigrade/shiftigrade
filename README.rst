@@ -103,13 +103,13 @@ AWS access for running **cloudigrade** inside Docker must be enabled via environ
 -  ``AWS_SQS_ACCESS_KEY_ID``
 -  ``AWS_SQS_SECRET_ACCESS_KEY``
 -  ``AWS_SQS_REGION``
--  ``AWS_NAME_PREFIX``
+-  ``DEPLOYMENT_PREFIX``
 -  ``HOUNDIGRADE_ECS_CLUSTER_NAME``
 -  ``HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME``
 -  ``HOUNDIGRADE_AWS_AVAILABILITY_ZONE``
 -  ``CLOUDTRAIL_EVENT_URL``
 
-The values for ``AWS_`` keys and region may be reused for the ``AWS_SQS_`` variables. ``AWS_NAME_PREFIX`` should be set to something unique to your environment like ``${USER}-``.
+The values for ``AWS_`` keys and region may be reused for the ``AWS_SQS_`` variables. ``DEPLOYMENT_PREFIX`` should be set to something unique to your environment like ``${USER}-``.
 
 
 Common commands
