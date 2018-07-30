@@ -27,4 +27,6 @@ data:
   django-database-host: {{env "DJANGO_DATABASE_HOST" | default .db.databaseHost}}
   django-debug: {{.django.debug | quote}}
   django-settings-module: {{.django.settingsModule}}
+  database-name: {{env "DJANGO_DATABASE_NAME" | default .db.databaseName}}
+  database-port: {{env "DJANGO_DATABASE_PORT" | default .db.databasePort}}
 type: Opaque

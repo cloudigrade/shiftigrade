@@ -88,7 +88,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
@@ -97,13 +97,13 @@ spec:
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
-              key: database-user
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              key: database-username
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
@@ -303,7 +303,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
@@ -313,12 +313,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
