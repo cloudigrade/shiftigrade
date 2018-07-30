@@ -36,6 +36,10 @@ spec:
   - type: ConfigChange
   - imageChange: {}
     type: ImageChange
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
 ---
 kind: BuildConfig
 apiVersion: v1
@@ -69,3 +73,7 @@ spec:
   - type: ConfigChange
   - imageChange: {}
     type: ImageChange
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
