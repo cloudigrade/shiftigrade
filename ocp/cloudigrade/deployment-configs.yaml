@@ -86,8 +86,13 @@ spec:
               name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               key: database-name
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+        - name: DJANGO_DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: database-port
               name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
@@ -301,8 +306,13 @@ spec:
               name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               key: database-name
+              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+         - name: DJANGO_DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: database-port
               name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
