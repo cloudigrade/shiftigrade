@@ -62,9 +62,9 @@ include:
         secretKey:
       db:
         secretsFileName: postgresql
-        databaseHost: postgres.c7o17pvjckm4.us-east-1.rds.amazonaws.com
+        databaseHost: postgresql.c7o17pvjckm4.us-east-1.rds.amazonaws.com
         databaseName: postgres
-        databasePort: 5000
+        databasePort: 5432
         databaseUsername:
         databasePassword:
   - name: frontigrade
