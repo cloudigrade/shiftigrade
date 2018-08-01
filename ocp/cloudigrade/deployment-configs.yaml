@@ -239,7 +239,6 @@ metadata:
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
-spec:
   selector:
     name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-celery
   replicas: {{.celery.replicaCount}}
@@ -309,7 +308,7 @@ spec:
             configMapKeyRef:
               key: database-name
               name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
-         - name: DJANGO_DATABASE_PORT
+        - name: DJANGO_DATABASE_PORT
           valueFrom:
             configMapKeyRef:
               key: database-port
