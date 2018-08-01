@@ -6,7 +6,8 @@ Test Templates:
     - master
     - tags
   before_script:
-    - oc login https://api.insights.openshift.com --token=$OC_QE_TOKEN
+    - oc version
+    - oc login ${KUBE_URL} --token=${KUBE_TOKEN}
   script:
     - kontemplate template ocp/local.yaml | oc apply --dry-run -f -
     - kontemplate template ocp/test.yaml | oc apply --dry-run -f -
@@ -21,13 +22,3 @@ Test Ansible Playbooks:
     - pip install ansible
   script:
     - ansible-playbook --syntax-check ansible/*.yaml
-
-Deploy Test Environment:
-  stage: deploy
-  only:
-    - master
-    - tags
-  before_script:
-    - oc login https://api.insights.openshift.com --token=$OC_TEST_TOKEN
-  script:
-    - kontemplate template ocp/test.yaml | oc apply -f -
