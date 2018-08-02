@@ -61,7 +61,7 @@ include:
         secretsFileName: postgresql
         databaseHost: postgresql.myproject.svc
         databaseName: postgres
-        databaseUsername: postgres
+        databaseUser: postgres
         databasePassword: postgres
         databasePort: 5432
   - name: frontigrade

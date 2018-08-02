@@ -116,7 +116,7 @@ Configuring Shiftigrade Test env with PostgreSql RDS
 .. note:: The PostgreSql instance for the test environment has been set up in aws rds.
 
 #. export the following as environment variables:
-    - export DJANGO_DATABASE_USER=$YOUR-USERNAME
+    - export DJANGO_DATABASE_USER=$YOUR-USER
     - export DJANGO_DATABASE_PASSWORD=$YOUR-PASSWORD
 
 Common commands

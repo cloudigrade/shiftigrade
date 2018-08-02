@@ -65,7 +65,7 @@ include:
         databaseHost: postgresql.c7o17pvjckm4.us-east-1.rds.amazonaws.com
         databaseName: postgres
         databasePort: 5432
-        databaseUsername:
+        databaseUser:
         databasePassword:
   - name: frontigrade
     values:

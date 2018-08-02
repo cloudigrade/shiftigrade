@@ -102,7 +102,7 @@ spec:
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
-              key: database-username
+              key: database-user
               name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
