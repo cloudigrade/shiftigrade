@@ -39,7 +39,7 @@ spec:
   resources:
     limits:
       cpu: 1
-      memory: 2Gi
+      memory: 256Mi
 ---
 kind: BuildConfig
 apiVersion: v1
@@ -76,4 +76,4 @@ spec:
   resources:
     limits:
       cpu: 1
-      memory: 2Gi
+      memory: 256Mi
