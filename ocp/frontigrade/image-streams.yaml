@@ -1,10 +1,13 @@
+{{if (eq .env "local") or (eq .env "review")}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 ---
 kind: ImageStream
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.frontigrade.imageStreamName}}
+  name: {{$prefix}}{{.frontigrade.imageStreamName}}
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 {{end}}

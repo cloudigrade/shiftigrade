@@ -1,10 +1,13 @@
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{if (eq .env "local") or (eq .env "review")}}
+{{/* We only use buildconfigs if the environment is local, or review. */}}
 ---
 kind: BuildConfig
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+  name: {{$prefix}}{{.name}}
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
@@ -19,19 +22,18 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
+      name: {{$prefix}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
   strategy:
     type: Docker
   triggers:
-  {{if ne .env "local"}}
-  - gitlab:
-      secret: {{env "GITLAB_SECRET_TOKEN" | default .gitlab.secretToken | default (randAlphaNum 16)}}
-    type: GitLab
-  {{end}}
   - type: ConfigChange
   - imageChange: {}
     type: ImageChange
+{{if ne .env "local"}}
+{{/* Resource limits are only relevant when we're running in OSD */}}
   resources:
     limits:
-      cpu: 1
-      memory: 2Gi
+      cpu: {{env "FRONTIGRADE_BC_CPU_LIMIT" | default .build.cpuLimit}}
+      memory: {{env "FRONTIGRADE_BC_MEM_LIMIT | default .build.memLimit"}}
+{{end}}
+{{end}}

@@ -1,40 +1,93 @@
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+  name: {{$prefix}}{{.name}}-api
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
-  host: {{env "API_ROUTE_HOST" | default .api.routeHost}}
   path: {{env "API_ROUTE_PATH" | default .api.routePath}}
   port:
-    targetPort: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}nginx
+    targetPort: {{$prefix}}nginx
   to:
     kind: Service
-    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+    name: {{$prefix}}{{.name}}-api
     weight: 100
   wildcardPolicy: None
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-auth
+  name: {{$prefix}}{{.name}}-auth
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
-  host: {{env "AUTH_ROUTE_HOST" | default .auth.routeHost}}
   path: {{env "AUTH_ROUTE_PATH" | default .auth.routePath}}
   port:
-    targetPort: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}nginx
+    targetPort: {{$prefix}}nginx
   to:
     kind: Service
-    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+    name: {{$prefix}}{{.name}}-api
     weight: 100
   wildcardPolicy: None
+{{if .fancyDomain}}
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{$prefix}}{{.name}}-api-fancy
+  labels:
+    deployment: {{$prefix}}{{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
+spec:
+  host: {{env "API_FANCY_ROUTE_PATH" | default .api.fancyRouteHost}}
+  path: {{env "API_ROUTE_PATH" | default .api.routePath}}
+  port:
+    targetPort: {{$prefix}}nginx
+  to:
+    kind: Service
+    name: {{$prefix}}{{.name}}-api
+    weight: 100
+  tls:
+    caCertificate: {{env "TLS_CA_CERTIFICATE" | default .tls.ca}}
+    certificate: {{env "TLS_CERTIFICATE" | default .tls.cert}}
+    key: {{env "TLS_CERTIFICATE_KEY" | default .tls.certKey}}
+    termination: {{env "TERMINATION" | default .tls.termination}}
+    insecureEdgeTerminationPolicy: {{env "TLS_INSECURE_EDGE_TERMINATION_POLICY" | default .tls.insecureEdgeTerminationPolicy}}
+  wildcardPolicy: None
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{$prefix}}{{.name}}-auth-fancy
+  labels:
+    deployment: {{$prefix}}{{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
+spec:
+  host: {{env "AUTH_FANCY_ROUTE_PATH" | default .auth.fancyRouteHost}}
+  path: {{env "AUTH_ROUTE_PATH" | default .auth.routePath}}
+  port:
+    targetPort: {{$prefix}}nginx
+  to:
+    kind: Service
+    name: {{$prefix}}{{.name}}-api
+    weight: 100
+  tls:
+    caCertificate: {{env "TLS_CA_CERTIFICATE" | default .tls.ca}}
+    certificate: {{env "TLS_CERTIFICATE" | default .tls.cert}}
+    key: {{env "TLS_CERTIFICATE_KEY" | default .tls.certKey}}
+    termination: {{env "TERMINATION" | default .tls.termination}}
+    insecureEdgeTerminationPolicy: {{env "TLS_INSECURE_EDGE_TERMINATION_POLICY" | default .tls.insecureEdgeTerminationPolicy}}
+  wildcardPolicy: None
+{{end}}

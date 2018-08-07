@@ -1,20 +1,48 @@
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+  name: {{$prefix}}{{.name}}
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
-  host: {{env "FRONTIGRADE_ROUTE_HOST" | default .frontigrade.routeHost}}
   path: {{env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath}}
   port:
-    targetPort: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+    targetPort: {{$prefix}}{{.name}}
   to:
     kind: Service
-    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+    name: {{$prefix}}{{.name}}
     weight: 100
   wildcardPolicy: None
+{{if .fancyDomain}}
+---
+kind: Route
+apiVersion: v1
+metadata:
+  name: {{$prefix}}{{.name}}-fancy
+  labels:
+    deployment: {{$prefix}}{{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
+spec:
+  host: {{env "FRONTIGRADE_FANCY_ROUTE_PATH" | default .frontigrade.fancyRouteHost}}
+  path: {{env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath}}
+  port:
+    targetPort: {{$prefix}}{{.name}}
+  to:
+    kind: Service
+    name: {{$prefix}}{{.name}}
+    weight: 100
+  tls:
+    caCertificate: {{env "TLS_CA_CERTIFICATE" | default .tls.ca}}
+    certificate: {{env "TLS_CERTIFICATE" | default .tls.cert}}
+    key: {{env "TLS_CERTIFICATE_KEY" | default .tls.certKey}}
+    termination: {{env "TERMINATION" | default .tls.termination}}
+    insecureEdgeTerminationPolicy: {{env "TLS_INSECURE_EDGE_TERMINATION_POLICY" | default .tls.insecureEdgeTerminationPolicy}}
+  wildcardPolicy: None
+{{end}}

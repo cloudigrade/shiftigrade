@@ -1,14 +1,9 @@
+# TODO: Actually use this.
 ---
 global:
-  env: test
-  namespace: cloudigrade-test
-  fancyDomain: true
-  tls:
-    ca:
-    cert:
-    certKey:
-    insecureEdgeTerminationPolicy: Redirect
-    termination: edge
+  env: review
+  namespace: cloudigrade-review
+  fancyDomain: false
 include:
   - name: cloudigrade
     values:

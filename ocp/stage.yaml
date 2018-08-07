@@ -1,7 +1,7 @@
 ---
 global:
-  env: test
-  namespace: cloudigrade-test
+  env: stage
+  namespace: cloudigrade-stage
   fancyDomain: true
   tls:
     ca:
@@ -21,11 +21,11 @@ include:
         imageStreamName: cloudigrade
         imageStreamTag: latest
         memoryLimit: 1Gi
-        fancyRouteHost: test.cloudigra.de
+        fancyRouteHost: stage.cloudigra.de
         routeHost:
         routePath: /api/v1/
       auth:
-        fancyRouteHost: test.cloudigra.de
+        fancyRouteHost: stage.cloudigra.de
         routeHost:
         routePath: /auth/
       nginx:
@@ -45,17 +45,17 @@ include:
           defaultRegion: us-east-1
           accessKeyId:
           secretAccessKey:
-          namePrefix: test-
+          namePrefix: stage-
         defaultRegion: us-east-1
         accessKeyId:
         secretAccessKey:
         houndigrade:
           ecs:
-            clusterName: cloudigrade-test-us-east-1b
+            clusterName: cloudigrade-stage-us-east-1a
             imageName: cloudigrade/houndigrade
             familyName: Houndigrade
-          availabilityZone: us-east-1b
-          autoscalingGroupName: EC2ContainerService-cloudigrade-test-us-east-1b-EcsInstanceAsg-1W1TT97VE7KD
+          availabilityZone: us-east-1a
+          autoscalingGroupName: EC2ContainerService-cloudigrade-stage-us-east-1a-EcsInstanceAsg-1WBHJE3U5SY18
           scaleUpClusterSchedule: 3600
         cloudtrailEventUrl:
       django:
@@ -84,7 +84,7 @@ include:
         imageStreamTag: latest
         memoryLimit: 512Mi
         port: 8080
-        fancyRouteHost: test.cloudigra.de
+        fancyRouteHost: stage.cloudigra.de
         routeHost:
         routePath: /
       build:

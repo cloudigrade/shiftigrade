@@ -1,18 +1,19 @@
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+  name: {{$prefix}}{{.name}}
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
   selector:
-    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+    name: {{$prefix}}{{.name}}
   ports:
-  - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+  - name: {{$prefix}}{{.name}}
     port: 80
     protocol: TCP
     targetPort: {{.frontigrade.port}}

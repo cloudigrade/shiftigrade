@@ -1,16 +1,17 @@
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 ---
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+  name: {{$prefix}}{{.name}}
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
   selector:
-    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+    name: {{$prefix}}{{.name}}
   replicas: 1
   revisionHistoryLimit: 10
   strategy:
@@ -18,24 +19,31 @@ spec:
   template:
     metadata:
       labels:
-        name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+        name: {{$prefix}}{{.name}}
     spec:
       containers:
-      - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+      - name: {{$prefix}}{{.name}}
+{{if (ne .env "local") or (ne .env "review")}}
+        image: {{env "FRONTIGRADE_IMAGE"}}
+{{else}}
         image: ' '
+        imagePullPolicy: Always
+{{end}}
         resources:
           limits:
             memory: {{.frontigrade.memoryLimit}}
         ports:
         - containerPort: {{.frontigrade.port}}
           protocol: TCP
+{{if (eq .env "local") or (eq .env "review")}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
         automatic: {{.frontigrade.enableImageChangeTrigger}}
         containerNames:
-          - {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+          - {{$prefix}}{{.name}}
         from:
           kind: ImageStreamTag
-          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
+          name: {{$prefix}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
     - type: ConfigChange
+{{end}}

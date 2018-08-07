@@ -1,16 +1,17 @@
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 ---
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+  name: {{$prefix}}{{.name}}-api
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
   selector:
-    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+    name: {{$prefix}}{{.name}}-api
   replicas: 1
   revisionHistoryLimit: 10
   strategy:
@@ -23,129 +24,156 @@ spec:
           - rh-postgresql96
           - rh-python36
           - ./manage.py migrate
-          containerName: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+          containerName: {{$prefix}}{{.name}}-api
         failurePolicy: Abort
     type: Recreate
   template:
     metadata:
       labels:
-        name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+        name: {{$prefix}}{{.name}}-api
     spec:
       containers:
-      - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+      - name: {{$prefix}}{{.name}}-api
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-access-key-id
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-secret-access-key
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_DEFAULT_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-default-region
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SQS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-sqs-access-key-id
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SQS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-sqs-secret-access-key
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SQS_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-region
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
               key: aws-name-prefix
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_SETTINGS_MODULE
           valueFrom:
             configMapKeyRef:
               key: django-settings-module
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_SECRET_KEY
           valueFrom:
             secretKeyRef:
               key: django-secret-key
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_ALLOWED_HOSTS
           valueFrom:
             configMapKeyRef:
               key: django-allowed-hosts
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
+{{if (eq .env "local") or (eq .env "review")}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               key: database-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
-        - name: DJANGO_DATABASE_PORT
-          valueFrom:
-            configMapKeyRef:
-              key: database-port
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+{{else}}
+        - name: DJANGO_DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: database-name
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: database-port
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: django-database-host
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: {{$prefix}}{{.name}}
+{{end}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
               key: django-debug
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_CLUSTER_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-cluster-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_IMAGE_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-family-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-availability-zone
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
+{{if (ne .env "local") or (ne .env "review")}}
+        image: {{env "API_IMAGE"}}
+{{else}}
         image: ' '
         imagePullPolicy: Always
+{{end}}
         resources:
           limits:
             memory: {{.api.memoryLimit}}
@@ -173,10 +201,14 @@ spec:
           timeoutSeconds: 1
         volumeMounts:
         - mountPath: /var/run/cloudigrade
-          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-socket
-      - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}nginx
+          name: {{$prefix}}{{.name}}-socket
+      - name: {{$prefix}}nginx
+{{if (ne .env "local") or (ne .env "review")}}
+        image: {{env "NGINX_IMAGE"}}
+{{else}}
         image: ' '
         imagePullPolicy: Always
+{{end}}
         ports:
         - containerPort: {{.nginx.port}}
           protocol: TCP
@@ -206,41 +238,43 @@ spec:
           timeoutSeconds: 1
         volumeMounts:
         - mountPath: /var/run/cloudigrade
-          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-socket
+          name: {{$prefix}}{{.name}}-socket
       volumes:
-      - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-socket
+      - name: {{$prefix}}{{.name}}-socket
         emptyDir: {}
+{{if (eq .env "local") or (eq .env "review")}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
         automatic: {{.api.enableImageChangeTrigger}}
         containerNames:
-          - {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-api
+          - {{$prefix}}{{.name}}-api
         from:
           kind: ImageStreamTag
-          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.api.imageStreamName}}:{{.api.imageStreamTag}}
+          name: {{$prefix}}{{.api.imageStreamName}}:{{.api.imageStreamTag}}
     - type: ImageChange
       imageChangeParams:
         automatic: {{.nginx.enableImageChangeTrigger}}
         containerNames:
-          - {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}nginx
+          - {{$prefix}}nginx
         from:
           kind: ImageStreamTag
-          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.nginx.imageStreamName}}:{{.nginx.imageStreamTag}}
+          name: {{$prefix}}{{.nginx.imageStreamName}}:{{.nginx.imageStreamTag}}
     - type: ConfigChange
+{{end}}
 ---
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-celery
+  name: {{$prefix}}{{.name}}-celery
   labels:
-    deployment: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-deployment
+    deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
   selector:
-    name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-celery
+    name: {{$prefix}}{{.name}}-celery
   replicas: {{.celery.replicaCount}}
   revisionHistoryLimit: 10
   strategy:
@@ -248,128 +282,155 @@ spec:
   template:
     metadata:
       labels:
-        name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-celery
+        name: {{$prefix}}{{.name}}-celery
     spec:
       containers:
-      - name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-celery
+      - name: {{$prefix}}{{.name}}-celery
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-access-key-id
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-secret-access-key
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_DEFAULT_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-default-region
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SQS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-sqs-access-key-id
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SQS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-sqs-secret-access-key
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_SQS_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-region
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
               key: aws-name-prefix
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_SETTINGS_MODULE
           valueFrom:
             configMapKeyRef:
               key: django-settings-module
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_SECRET_KEY
           valueFrom:
             secretKeyRef:
               key: django-secret-key
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_ALLOWED_HOSTS
           valueFrom:
             configMapKeyRef:
               key: django-allowed-hosts
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
+{{if (eq .env "local") or (eq .env "review")}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               key: database-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
-        - name: DJANGO_DATABASE_PORT
-          valueFrom:
-            configMapKeyRef:
-              key: database-port
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+{{else}}
+        - name: DJANGO_DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: database-name
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: database-port
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: django-database-host
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: {{$prefix}}{{.name}}
+{{end}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
               key: django-debug
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_CLUSTER_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-cluster-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_IMAGE_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-family-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-availability-zone
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
-              name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}
+              name: {{$prefix}}{{.name}}
+{{if (ne .env "local") or (ne .env "review")}}
+        image: {{env "CELERY_IMAGE"}}
+{{else}}
         image: ' '
         imagePullPolicy: Always
+{{end}}
         command:
           - /bin/sh
           - -c
@@ -403,13 +464,15 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
+{{if (eq .env "local") or (eq .env "review")}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
         automatic: {{.celery.enableImageChangeTrigger}}
         containerNames:
-          - {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.name}}-celery
+          - {{$prefix}}{{.name}}-celery
         from:
           kind: ImageStreamTag
-          name: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX"}}-{{end}}{{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
+          name: {{$prefix}}{{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
     - type: ConfigChange
+{{end}}
