@@ -2,9 +2,6 @@ image: registry.gitlab.com/cloudigrade/images/deploy-container:latest
 
 Test Templates:
   stage: test
-  except:
-    - master
-    - tags
   before_script:
     - oc version
     - oc login ${KUBE_URL} --token=${KUBE_TOKEN}
@@ -18,9 +15,6 @@ Test Templates:
 Test Ansible Playbooks:
   image: python:latest
   stage: test
-  except:
-    - master
-    - tags
   before_script:
     - pip install ansible
   script:
