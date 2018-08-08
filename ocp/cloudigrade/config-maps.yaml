@@ -1,4 +1,5 @@
 {{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{$bucketprefix := or (env "DEPLOYMENT_PREFIX") (env "USER")}}
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -24,7 +25,7 @@ data:
   aws-s3-bucket-name: {{$prefix}}{{env "AWS_S3_BUCKET_NAME" | default .aws.s3BucketName}}
 {{else}}
   aws-name-prefix: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{ env "USER" | printf "%s-" | quote}}{{end}}
-  aws-s3-bucket-name: {{$prefix}}{{if (env "AWS_S3_BUCKET_NAME")}}{{env "AWS_S3_BUCKET_NAME"}}{{else}}{{ env "USER" | printf "%s-cloudigrade-s3" | quote}}{{end}}
+  aws-s3-bucket-name: {{if (env "AWS_S3_BUCKET_NAME")}}{{env "AWS_S3_BUCKET_NAME"}}{{else}}{{ $bucketprefix | printf "%s-cloudigrade-s3" | quote}}{{end}}
 {{end}}
   django-allowed-hosts: {{.django.allowedHosts | quote}}
   django-database-host: {{env "DJANGO_DATABASE_HOST" | default .db.databaseHost}}
