@@ -19,11 +19,12 @@ data:
   aws-houndigrade-scale-up-cluster-schedule: {{env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
   aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
-  aws-s3-bucket-name: {{env "AWS_S3_BUCKET_NAME" | default .aws.s3BucketName}}
 {{if ne .env "local"}}
   aws-name-prefix:  {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{.aws.sqs.namePrefix}}{{end}}
+  aws-s3-bucket-name: {{$prefix}}{{env "AWS_S3_BUCKET_NAME" | default .aws.s3BucketName}}
 {{else}}
   aws-name-prefix: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{ env "USER" | printf "%s-" | quote}}{{end}}
+  aws-s3-bucket-name: {{$prefix}}{{if (env "AWS_S3_BUCKET_NAME")}}{{env "AWS_S3_BUCKET_NAME"}}{{else}}{{ env "USER" | printf "%s-cloudigrade-s3" | quote}}{{end}}
 {{end}}
   django-allowed-hosts: {{.django.allowedHosts | quote}}
   django-database-host: {{env "DJANGO_DATABASE_HOST" | default .db.databaseHost}}
