@@ -22,7 +22,7 @@ data:
   aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
 {{if ne .env "local"}}
   aws-name-prefix:  {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{.aws.sqs.namePrefix}}{{end}}
-  aws-s3-bucket-name: {{$prefix}}{{env "AWS_S3_BUCKET_NAME" | default .aws.s3BucketName}}
+  aws-s3-bucket-name: {{env "AWS_S3_BUCKET_NAME" | default .aws.s3BucketName}}
 {{else}}
   aws-name-prefix: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{ env "USER" | printf "%s-" | quote}}{{end}}
   aws-s3-bucket-name: {{if (env "AWS_S3_BUCKET_NAME")}}{{env "AWS_S3_BUCKET_NAME"}}{{else}}{{ $bucketprefix | printf "%s-cloudigrade-s3" | quote}}{{end}}
