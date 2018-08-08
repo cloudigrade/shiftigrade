@@ -10,6 +10,9 @@ metadata:
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
+{{if or (env "API_ROUTE_HOST") (.api.routeHost)}}
+  host: {{env "API_ROUTE_HOST" | default .api.routeHost}}
+{{end}}
   path: {{env "API_ROUTE_PATH" | default .api.routePath}}
   port:
     targetPort: {{$prefix}}nginx
@@ -29,6 +32,9 @@ metadata:
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
+{{if or (env "AUTH_ROUTE_HOST") (.auth.routeHost)}}
+  host: {{env "AUTH_ROUTE_HOST" | default .auth.routeHost}}
+{{end}}
   path: {{env "AUTH_ROUTE_PATH" | default .auth.routePath}}
   port:
     targetPort: {{$prefix}}nginx
