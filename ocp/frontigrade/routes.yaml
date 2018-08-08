@@ -10,8 +10,8 @@ metadata:
     gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
 {{end}}
 spec:
-{{if or (env "FRONTIGRATE_ROUTE_HOST") (.frontigrade.routeHost)}}
-  host: {{env "FRONTIGRATE_ROUTE_HOST" | default .frontigrade.routeHost}}
+{{if or (env "FRONTIGRADE_ROUTE_HOST") (.frontigrade.routeHost)}}
+  host: {{env "FRONTIGRADE_ROUTE_HOST" | default .frontigrade.routeHost}}
 {{end}}
   path: {{env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath}}
   port:
