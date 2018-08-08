@@ -39,7 +39,7 @@ spec:
   resources:
     limits:
       cpu: {{env "CLOUDIGRADE_BC_CPU_LIMIT" | default .build.cpuLimit}}
-      memory: {{env "CLOUDIGRADE_BC_MEM_LIMIT | default .build.memLimit"}}
+      memory: {{env "CLOUDIGRADE_BC_MEM_LIMIT" | default .build.memLimit}}
 {{end}}
 ---
 kind: BuildConfig
@@ -73,6 +73,6 @@ spec:
   resources:
     limits:
       cpu: {{env "CLOUDIGRADE_BC_CPU_LIMIT" | default .build.cpuLimit}}
-      memory: {{env "CLOUDIGRADE_BC_MEM_LIMIT | default .build.memLimit"}}
+      memory: {{env "CLOUDIGRADE_BC_MEM_LIMIT" | default .build.memLimit}}
 {{end}}
 {{end}}

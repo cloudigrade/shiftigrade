@@ -34,6 +34,6 @@ spec:
   resources:
     limits:
       cpu: {{env "FRONTIGRADE_BC_CPU_LIMIT" | default .build.cpuLimit}}
-      memory: {{env "FRONTIGRADE_BC_MEM_LIMIT | default .build.memLimit"}}
+      memory: {{env "FRONTIGRADE_BC_MEM_LIMIT" | default .build.memLimit}}
 {{end}}
 {{end}}
