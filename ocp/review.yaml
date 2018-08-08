@@ -13,6 +13,8 @@ include:
         secretToken:
       api:
         enableImageChangeTrigger: true
+        repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
+        repoUriBranch: master
         imageStreamName: cloudigrade
         imageStreamTag: latest
         memoryLimit: 1Gi
@@ -25,6 +27,10 @@ include:
         routePath: /auth/
       nginx:
         enableImageChangeTrigger: true
+        repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
+        repoUriBranch: master
+        repoContextDir: deployment/
+        baseImage: centos/nginx-112-centos7:latest
         imageStreamName: cloudigrade-nginx
         imageStreamTag: latest
         memoryLimit: 512Mi
@@ -75,6 +81,8 @@ include:
         secretToken:
       frontigrade:
         enableImageChangeTrigger: true
+        repoUri: https://gitlab.com/cloudigrade/frontigrade.git
+        repoUriBranch: master
         imageStreamName: frontigrade
         imageStreamTag: latest
         memoryLimit: 512Mi

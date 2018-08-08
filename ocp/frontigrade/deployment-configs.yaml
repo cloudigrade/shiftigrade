@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: {{$prefix}}{{.name}}
-{{if (ne .env "local") or (ne .env "review")}}
+{{if and (ne .env "local") (ne .env "review")}}
         image: {{env "FRONTIGRADE_IMAGE"}}
 {{else}}
         image: ' '
@@ -35,7 +35,7 @@ spec:
         ports:
         - containerPort: {{.frontigrade.port}}
           protocol: TCP
-{{if (eq .env "local") or (eq .env "review")}}
+{{if or (eq .env "local") (eq .env "review")}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:

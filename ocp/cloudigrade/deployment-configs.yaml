@@ -85,7 +85,7 @@ spec:
             configMapKeyRef:
               key: django-allowed-hosts
               name: {{$prefix}}{{.name}}
-{{if (eq .env "local") or (eq .env "review")}}
+{{if or (eq .env "local") (eq .env "review")}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             secretKeyRef:
@@ -168,7 +168,7 @@ spec:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
               name: {{$prefix}}{{.name}}
-{{if (ne .env "local") or (ne .env "review")}}
+{{if and (ne .env "local") (ne .env "review")}}
         image: {{env "API_IMAGE"}}
 {{else}}
         image: ' '
@@ -203,7 +203,7 @@ spec:
         - mountPath: /var/run/cloudigrade
           name: {{$prefix}}{{.name}}-socket
       - name: {{$prefix}}nginx
-{{if (ne .env "local") or (ne .env "review")}}
+{{if and (ne .env "local") (ne .env "review")}}
         image: {{env "NGINX_IMAGE"}}
 {{else}}
         image: ' '
@@ -242,7 +242,7 @@ spec:
       volumes:
       - name: {{$prefix}}{{.name}}-socket
         emptyDir: {}
-{{if (eq .env "local") or (eq .env "review")}}
+{{if or (eq .env "local") (eq .env "review")}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
@@ -337,7 +337,7 @@ spec:
             configMapKeyRef:
               key: django-allowed-hosts
               name: {{$prefix}}{{.name}}
-{{if (eq .env "local") or (eq .env "review")}}
+{{if or (eq .env "local") (eq .env "review")}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             secretKeyRef:
@@ -425,7 +425,7 @@ spec:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
               name: {{$prefix}}{{.name}}
-{{if (ne .env "local") or (ne .env "review")}}
+{{if and (ne .env "local") (ne .env "review")}}
         image: {{env "CELERY_IMAGE"}}
 {{else}}
         image: ' '
@@ -464,7 +464,7 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
-{{if (eq .env "local") or (eq .env "review")}}
+{{if or (eq .env "local") (eq .env "review")}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:

@@ -1,4 +1,4 @@
-{{if (eq .env "local") or (eq .env "review")}}
+{{if or (eq .env "local") (eq .env "review")}}
 {{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 ---
 kind: ImageStream

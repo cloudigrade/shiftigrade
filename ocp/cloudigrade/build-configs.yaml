@@ -1,5 +1,5 @@
 {{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
-{{if (eq .env "local") or (eq .env "review")}}
+{{if or (eq .env "local") (eq .env "review")}}
 {{/* We only use buildconfigs if the environment is local, or review. */}}
 ---
 kind: BuildConfig
