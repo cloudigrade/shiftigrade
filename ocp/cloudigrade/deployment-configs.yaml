@@ -168,6 +168,11 @@ spec:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
               name: {{$prefix}}{{.name}}
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-name
+              name: {{$prefix}}{{.name}}
 {{if and (ne .env "local") (ne .env "review")}}
         image: {{env "API_IMAGE"}}
 {{else}}
@@ -424,6 +429,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
+              name: {{$prefix}}{{.name}}
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-name
               name: {{$prefix}}{{.name}}
 {{if and (ne .env "local") (ne .env "review")}}
         image: {{env "CELERY_IMAGE"}}

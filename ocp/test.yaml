@@ -58,6 +58,7 @@ include:
           autoscalingGroupName: EC2ContainerService-cloudigrade-test-us-east-1b-EcsInstanceAsg-1W1TT97VE7KD
           scaleUpClusterSchedule: 3600
         cloudtrailEventUrl:
+        s3BucketName: test-cloudigrade
       django:
         debug: false
         allowedHosts: '*'
