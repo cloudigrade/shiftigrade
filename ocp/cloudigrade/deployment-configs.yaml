@@ -21,7 +21,6 @@ spec:
           command:
           - scl
           - enable
-          - rh-postgresql96
           - rh-python36
           - ./manage.py migrate
           containerName: {{$prefix}}{{.name}}-api
@@ -445,7 +444,7 @@ spec:
           - /bin/sh
           - -c
           - >
-            PYTHONPATH=. scl enable rh-postgresql96 rh-python36 --
+            PYTHONPATH=. scl enable rh-python36 --
             celery -l info -A config worker --beat --concurrency 2
             --scheduler django_celery_beat.schedulers:DatabaseScheduler
             -Q copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster,analyze_log
