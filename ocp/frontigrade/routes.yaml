@@ -27,6 +27,8 @@ kind: Route
 apiVersion: v1
 metadata:
   name: {{$prefix}}{{.name}}-fancy
+  annotations:
+    kubernetes.io/tls-acme: {{.fancyDomainTLS}}
   labels:
     deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
@@ -41,11 +43,5 @@ spec:
     kind: Service
     name: {{$prefix}}{{.name}}
     weight: 100
-  tls:
-    caCertificate: {{env "TLS_CA_CERTIFICATE" | default .tls.ca}}
-    certificate: {{env "TLS_CERTIFICATE" | default .tls.cert}}
-    key: {{env "TLS_CERTIFICATE_KEY" | default .tls.certKey}}
-    termination: {{env "TERMINATION" | default .tls.termination}}
-    insecureEdgeTerminationPolicy: {{env "TLS_INSECURE_EDGE_TERMINATION_POLICY" | default .tls.insecureEdgeTerminationPolicy}}
   wildcardPolicy: None
 {{end}}

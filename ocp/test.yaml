@@ -3,6 +3,7 @@ global:
   env: test
   namespace: cloudigrade-test
   fancyDomain: true
+  fancyDomainTLS: true
   tls:
     ca:
     cert:

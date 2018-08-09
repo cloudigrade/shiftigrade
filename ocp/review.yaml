@@ -4,6 +4,7 @@ global:
   env: review
   namespace: cloudigrade-review
   fancyDomain: false
+  fancyDomainTLS: false
 include:
   - name: cloudigrade
     values:

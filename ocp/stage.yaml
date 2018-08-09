@@ -3,6 +3,7 @@ global:
   env: stage
   namespace: cloudigrade-stage
   fancyDomain: true
+  fancyDomainTLS: true
   tls:
     ca:
     cert:
