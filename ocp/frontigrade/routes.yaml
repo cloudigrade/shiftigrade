@@ -28,7 +28,7 @@ apiVersion: v1
 metadata:
   name: {{$prefix}}{{.name}}-fancy
   annotations:
-    kubernetes.io/tls-acme: {{.fancyDomainTLS}}
+    kubernetes.io/tls-acme: {{.fancyDomainTLS | quote}}
   labels:
     deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
