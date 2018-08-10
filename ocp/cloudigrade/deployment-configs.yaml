@@ -12,7 +12,7 @@ metadata:
 spec:
   selector:
     name: {{$prefix}}{{.name}}-api
-  replicas: 1
+  replicas: {{.api.replicaCount}}
   revisionHistoryLimit: 10
   strategy:
     recreateParams:
@@ -180,7 +180,7 @@ spec:
 {{end}}
 {{if ne .env "local"}}
         resources:
-          request:
+          requests:
             cpu: {{.api.limits.container.cpuRequest}}
             memory: {{.api.limits.container.memRequest}}
           limits:
@@ -224,7 +224,7 @@ spec:
           protocol: TCP
 {{if ne .env "local"}}
         resources:
-          request:
+          requests:
             cpu: {{.nginx.limits.container.cpuRequest}}
             memory: {{.nginx.limits.container.memRequest}}
           limits:
@@ -282,7 +282,7 @@ spec:
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-celery
+  name: {{$prefix}}{{.name}}-celery-beat
   labels:
     deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
@@ -290,18 +290,18 @@ metadata:
 {{end}}
 spec:
   selector:
-    name: {{$prefix}}{{.name}}-celery
-  replicas: {{.celery.replicaCount}}
+    name: {{$prefix}}{{.name}}-celery-beat
+  replicas: {{.celery.beat.replicaCount}}
   revisionHistoryLimit: 10
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: {{$prefix}}{{.name}}-celery
+        name: {{$prefix}}{{.name}}-celery-beat
     spec:
       containers:
-      - name: {{$prefix}}{{.name}}-celery
+      - name: {{$prefix}}{{.name}}-celery-beat
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
@@ -457,17 +457,246 @@ spec:
           - -c
           - >
             PYTHONPATH=. scl enable rh-python36 --
-            celery -l info -A config worker --beat --concurrency 2
+            celery beat
+            --app config
+            --loglevel info
+            --pidfile=
             --scheduler django_celery_beat.schedulers:DatabaseScheduler
-            -Q copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster,analyze_log
 {{if ne .env "local"}}
         resources:
-          request:
-            cpu: {{.celery.limits.container.cpuRequest}}
-            memory: {{.celery.limits.container.memRequest}}
+          requests:
+            cpu: {{.celery.beat.limits.container.cpuRequest}}
+            memory: {{.celery.beat.limits.container.memRequest}}
           limits:
-            cpu: {{.celery.limits.container.cpuLimit}}
-            memory: {{.celery.limits.container.memLimit}}
+            cpu: {{.celery.beat.limits.container.cpuLimit}}
+            memory: {{.celery.beat.limits.container.memLimit}}
+{{end}}
+        livenessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - 'ps axo command | grep -v grep | grep python'
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - '[[ $(ps axo command | grep "[p]ython" | grep celery | grep -c beat) -gt 1 ]]'
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+{{if or (eq .env "local") (eq .env "review")}}
+  triggers:
+    - type: "ImageChange"
+      imageChangeParams:
+        automatic: {{.celery.enableImageChangeTrigger}}
+        containerNames:
+          - {{$prefix}}{{.name}}-celery-beat
+        from:
+          kind: ImageStreamTag
+          name: {{$prefix}}{{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
+    - type: ConfigChange
+{{end}}
+---
+kind: DeploymentConfig
+apiVersion: v1
+metadata:
+  name: {{$prefix}}{{.name}}-celery-worker
+  labels:
+    deployment: {{$prefix}}{{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
+spec:
+  selector:
+    name: {{$prefix}}{{.name}}-celery-worker
+  replicas: {{.celery.worker.replicaCount}}
+  revisionHistoryLimit: 10
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: {{$prefix}}{{.name}}-celery-worker
+    spec:
+      containers:
+      - name: {{$prefix}}{{.name}}-celery-worker
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: aws-access-key-id
+              name: {{$prefix}}{{.name}}
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws-secret-access-key
+              name: {{$prefix}}{{.name}}
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: aws-default-region
+              name: {{$prefix}}{{.name}}
+        - name: AWS_SQS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: aws-sqs-access-key-id
+              name: {{$prefix}}{{.name}}
+        - name: AWS_SQS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws-sqs-secret-access-key
+              name: {{$prefix}}{{.name}}
+        - name: AWS_SQS_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-region
+              name: {{$prefix}}{{.name}}
+        - name: AWS_NAME_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: aws-name-prefix
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_SETTINGS_MODULE
+          valueFrom:
+            configMapKeyRef:
+              key: django-settings-module
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: django-secret-key
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_ALLOWED_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              key: django-allowed-hosts
+              name: {{$prefix}}{{.name}}
+{{if or (eq .env "local") (eq .env "review")}}
+        - name: DJANGO_DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              key: database-name
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+        - name: DJANGO_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: django-database-host
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+        - name: DJANGO_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+{{else}}
+        - name: DJANGO_DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: database-name
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: database-port
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: django-database-host
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: {{$prefix}}{{.name}}
+{{end}}
+        - name: DJANGO_DEBUG
+          valueFrom:
+            configMapKeyRef:
+              key: django-debug
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_ECS_CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-cluster-name
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-name
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_ECS_FAMILY_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-family-name
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-availability-zone
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-autoscaling-group-name
+              name: {{$prefix}}{{.name}}
+        - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-scale-up-cluster-schedule
+              name: {{$prefix}}{{.name}}
+        - name: CLOUDTRAIL_EVENT_URL
+          valueFrom:
+            configMapKeyRef:
+              key: aws-cloudtrail-event-url
+              name: {{$prefix}}{{.name}}
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-name
+              name: {{$prefix}}{{.name}}
+{{if and (ne .env "local") (ne .env "review")}}
+        image: {{env "CELERY_IMAGE"}}
+{{else}}
+        image: ' '
+        imagePullPolicy: Always
+{{end}}
+        command:
+          - /bin/sh
+          - -c
+          - >
+            PYTHONPATH=. scl enable rh-python36 --
+            celery worker
+            --app config
+            --loglevel info
+            --concurrency 1
+            --queues copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster,analyze_log
+{{if ne .env "local"}}
+        resources:
+          requests:
+            cpu: {{.celery.worker.limits.container.cpuRequest}}
+            memory: {{.celery.worker.limits.container.memRequest}}
+          limits:
+            cpu: {{.celery.worker.limits.container.cpuLimit}}
+            memory: {{.celery.worker.limits.container.memLimit}}
 {{end}}
         livenessProbe:
           exec:
@@ -497,7 +726,7 @@ spec:
       imageChangeParams:
         automatic: {{.celery.enableImageChangeTrigger}}
         containerNames:
-          - {{$prefix}}{{.name}}-celery
+          - {{$prefix}}{{.name}}-celery-worker
         from:
           kind: ImageStreamTag
           name: {{$prefix}}{{.celery.imageStreamName}}:{{.celery.imageStreamTag}}

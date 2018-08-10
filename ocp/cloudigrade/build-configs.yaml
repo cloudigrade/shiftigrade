@@ -37,7 +37,7 @@ spec:
 {{if ne .env "local"}}
 {{/* Resource limits are only relevant when we're running in OSD */}}
   resources:
-    request:
+    requests:
       cpu: {{.nginx.limits.build.cpuRequest}}
       memory: {{.nginx.limits.build.memRequest}}
     limits:
@@ -74,7 +74,7 @@ spec:
     type: ImageChange
 {{if ne .env "local"}}
   resources:
-    request:
+    requests:
       cpu: {{.api.limits.build.cpuRequest}}
       memory: {{.api.limits.build.memRequest}}
     limits:

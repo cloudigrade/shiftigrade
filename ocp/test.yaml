@@ -15,19 +15,18 @@ include:
     values:
       name: cloudigrade
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
-      gitlab:
-        secretToken:
       api:
         enableImageChangeTrigger: true
         imageStreamName: cloudigrade
         imageStreamTag: latest
         limits:
           container:
-            cpuRequest: 300m
-            cpuLimit: 500m
-            memRequest: 900Mi
-            memLimit: 1.2Gi
+            cpuRequest: 100m
+            cpuLimit: 200m
+            memRequest: 256Mi
+            memLimit: 512Mi
         fancyRouteHost: test.cloudigra.de
+        replicaCount: 2
         routeHost:
         routePath: /api/v1/
       auth:
@@ -40,10 +39,10 @@ include:
         imageStreamTag: latest
         limits:
           container:
-            cpuRequest: 300m
-            cpuLimit: 500m
-            memRequest: 128Mi
-            memLimit: 512Mi
+            cpuRequest: 100m
+            cpuLimit: 100m
+            memRequest: 64Mi
+            memLimit: 128Mi
         port: 8080
       celery:
         enableImageChangeTrigger: true
@@ -51,11 +50,26 @@ include:
         imageStreamTag: latest
         limits:
           container:
-            cpuRequest: 300m
-            cpuLimit: 500m
-            memRequest: 512Mi
-            memLimit: 1Gi
-        replicaCount: 1
+            cpuRequest: 100m
+            cpuLimit: 200m
+            memRequest: 128Mi
+            memLimit: 256Mi
+        beat:
+          replicaCount: 1
+          limits:
+            container:
+              cpuRequest: 100m
+              cpuLimit: 100m
+              memRequest: 64Mi
+              memLimit: 128Mi
+        worker:
+          replicaCount: 3
+          limits:
+            container:
+              cpuRequest: 100m
+              cpuLimit: 200m
+              memRequest: 256Mi
+              memLimit: 512Mi
       aws:
         sqs:
           defaultRegion: us-east-1
@@ -87,14 +101,9 @@ include:
         databasePort: 5432
         databaseUser:
         databasePassword:
-      build:
-        cpuLimit: 1
-        memLimit: 256Mi
   - name: frontigrade
     values:
       name: frontigrade
-      gitlab:
-        secretToken:
       frontigrade:
         enableImageChangeTrigger: true
         imageStreamName: frontigrade
@@ -102,10 +111,11 @@ include:
         limits:
           container:
             cpuRequest: 100m
-            cpuLimit: 500m
-            memRequest: 128Mi
-            memLimit: 256Mi
+            cpuLimit: 100m
+            memRequest: 64Mi
+            memLimit: 128Mi
         port: 8080
         fancyRouteHost: test.cloudigra.de
+        replicaCount: 2
         routeHost:
         routePath: /

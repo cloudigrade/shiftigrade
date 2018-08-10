@@ -12,7 +12,7 @@ metadata:
 spec:
   selector:
     name: {{$prefix}}{{.name}}
-  replicas: 1
+  replicas: {{.frontigrade.replicaCount}}
   revisionHistoryLimit: 10
   strategy:
     type: Recreate
@@ -31,7 +31,7 @@ spec:
 {{end}}
 {{if ne .env "local"}}
         resources:
-          request:
+          requests:
             cpu: {{.frontigrade.limits.container.cpuRequest}}
             memory: {{.frontigrade.limits.container.memRequest}}
           limits:

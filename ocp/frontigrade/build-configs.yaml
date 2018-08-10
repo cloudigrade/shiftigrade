@@ -32,7 +32,7 @@ spec:
 {{if ne .env "local"}}
 {{/* Resource limits are only relevant when we're running in OSD */}}
   resources:
-    request:
+    requests:
       cpu: {{.frontigrade.limits.build.cpuRequest}}
       memory: {{.frontigrade.limits.build.memRequest}}
     limits:
