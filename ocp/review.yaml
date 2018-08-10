@@ -114,7 +114,7 @@ include:
             cpuRequest: 100m
             cpuLimit: 500m
             memRequest: 128Mi
-            memLimit: 256mi
+            memLimit: 256Mi
           build:
             cpuRequest: 500m
             cpuLimit: 1

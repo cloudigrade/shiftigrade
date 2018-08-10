@@ -104,7 +104,7 @@ include:
             cpuRequest: 100m
             cpuLimit: 500m
             memRequest: 128Mi
-            memLimit: 256mi
+            memLimit: 256Mi
         port: 8080
         fancyRouteHost: www.cloudigra.de
         routeHost:
