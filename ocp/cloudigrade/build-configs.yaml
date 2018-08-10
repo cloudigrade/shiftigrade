@@ -37,9 +37,12 @@ spec:
 {{if ne .env "local"}}
 {{/* Resource limits are only relevant when we're running in OSD */}}
   resources:
+    request:
+      cpu: {{.nginx.limits.build.cpuRequest}}
+      memory: {{.nginx.limits.build.memRequest}}
     limits:
-      cpu: {{env "CLOUDIGRADE_BC_CPU_LIMIT" | default .build.cpuLimit}}
-      memory: {{env "CLOUDIGRADE_BC_MEM_LIMIT" | default .build.memLimit}}
+      cpu: {{.nginx.limits.build.cpuLimit}}
+      memory: {{.nginx.limits.build.memLimit}}
 {{end}}
 ---
 kind: BuildConfig
@@ -71,8 +74,11 @@ spec:
     type: ImageChange
 {{if ne .env "local"}}
   resources:
+    request:
+      cpu: {{.api.limits.build.cpuRequest}}
+      memory: {{.api.limits.build.memRequest}}
     limits:
-      cpu: {{env "CLOUDIGRADE_BC_CPU_LIMIT" | default .build.cpuLimit}}
-      memory: {{env "CLOUDIGRADE_BC_MEM_LIMIT" | default .build.memLimit}}
+      cpu: {{.api.limits.build.cpuLimit}}
+      memory: {{.api.limits.build.memLimit}}
 {{end}}
 {{end}}

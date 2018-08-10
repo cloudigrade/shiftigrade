@@ -178,9 +178,15 @@ spec:
         image: ' '
         imagePullPolicy: Always
 {{end}}
+{{if ne .env "local"}}
         resources:
+          request:
+            cpu: {{.api.limits.container.cpuRequest}}
+            memory: {{.api.limits.container.memRequest}}
           limits:
-            memory: {{.api.memoryLimit}}
+            cpu: {{.api.limits.container.cpuLimit}}
+            memory: {{.api.limits.container.memLimit}}
+{{end}}
         livenessProbe:
           exec:
             command:
@@ -216,9 +222,15 @@ spec:
         ports:
         - containerPort: {{.nginx.port}}
           protocol: TCP
+{{if ne .env "local"}}
         resources:
+          request:
+            cpu: {{.nginx.limits.container.cpuRequest}}
+            memory: {{.nginx.limits.container.memRequest}}
           limits:
-            memory: {{.nginx.memoryLimit}}
+            cpu: {{.nginx.limits.container.cpuLimit}}
+            memory: {{.nginx.limits.container.memLimit}}
+{{end}}
         livenessProbe:
           tcpSocket:
             port: {{.nginx.port}}
@@ -448,9 +460,15 @@ spec:
             celery -l info -A config worker --beat --concurrency 2
             --scheduler django_celery_beat.schedulers:DatabaseScheduler
             -Q copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster,analyze_log
+{{if ne .env "local"}}
         resources:
+          request:
+            cpu: {{.celery.limits.container.cpuRequest}}
+            memory: {{.celery.limits.container.memRequest}}
           limits:
-            memory: {{.celery.memoryLimit}}
+            cpu: {{.celery.limits.container.cpuLimit}}
+            memory: {{.celery.limits.container.memLimit}}
+{{end}}
         livenessProbe:
           exec:
             command:

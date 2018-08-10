@@ -15,7 +15,6 @@ include:
         repoUriBranch: master
         imageStreamName: cloudigrade
         imageStreamTag: latest
-        memoryLimit: 512Mi
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /api/v1/
       auth:
@@ -29,14 +28,12 @@ include:
         baseImage: centos/nginx-112-centos7:latest
         imageStreamName: cloudigrade-nginx
         imageStreamTag: latest
-        memoryLimit: 512Mi
         port: 8080
       celery:
         enableImageChangeTrigger: true
         imageStreamName: cloudigrade
         imageStreamTag: latest
         replicaCount: 1
-        memoryLimit: 512Mi
       aws:
         sqs:
           defaultRegion: us-east-1
@@ -76,7 +73,6 @@ include:
         repoUriBranch: master
         imageStreamName: frontigrade
         imageStreamTag: latest
-        memoryLimit: 512Mi
         port: 8080
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /

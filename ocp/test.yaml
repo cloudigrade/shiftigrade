@@ -21,7 +21,12 @@ include:
         enableImageChangeTrigger: true
         imageStreamName: cloudigrade
         imageStreamTag: latest
-        memoryLimit: 1Gi
+        limits:
+          container:
+            cpuRequest: 300m
+            cpuLimit: 500m
+            memRequest: 900Mi
+            memLimit: 1.2Gi
         fancyRouteHost: test.cloudigra.de
         routeHost:
         routePath: /api/v1/
@@ -33,14 +38,24 @@ include:
         enableImageChangeTrigger: true
         imageStreamName: cloudigrade-nginx
         imageStreamTag: latest
-        memoryLimit: 512Mi
+        limits:
+          container:
+            cpuRequest: 300m
+            cpuLimit: 500m
+            memRequest: 128Mi
+            memLimit: 512Mi
         port: 8080
       celery:
         enableImageChangeTrigger: true
         imageStreamName: cloudigrade
         imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest: 300m
+            cpuLimit: 500m
+            memRequest: 512Mi
+            memLimit: 1Gi
         replicaCount: 1
-        memoryLimit: 512Mi
       aws:
         sqs:
           defaultRegion: us-east-1
@@ -84,11 +99,13 @@ include:
         enableImageChangeTrigger: true
         imageStreamName: frontigrade
         imageStreamTag: latest
-        memoryLimit: 512Mi
+        limits:
+          container:
+            cpuRequest: 100m
+            cpuLimit: 500m
+            memRequest: 128Mi
+            memLimit: 256mi
         port: 8080
         fancyRouteHost: test.cloudigra.de
         routeHost:
         routePath: /
-      build:
-        cpuLimit: 1
-        memLimit: 1Gi

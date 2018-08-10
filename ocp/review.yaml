@@ -18,7 +18,17 @@ include:
         repoUriBranch: master
         imageStreamName: cloudigrade
         imageStreamTag: latest
-        memoryLimit: 1Gi
+        limits:
+          container:
+            cpuRequest: 300m
+            cpuLimit: 500m
+            memRequest: 900Mi
+            memLimit: 1.2Gi
+          build:
+            cpuRequest: 500m
+            cpuLimit: 1
+            memRequest: 512Mi
+            memLimit: 768Mi
         fancyRouteHost: test.cloudigra.de
         routeHost:
         routePath: /api/v1/
@@ -34,14 +44,29 @@ include:
         baseImage: centos/nginx-112-centos7:latest
         imageStreamName: cloudigrade-nginx
         imageStreamTag: latest
-        memoryLimit: 512Mi
+        limits:
+          container:
+            cpuRequest: 300m
+            cpuLimit: 500m
+            memRequest: 128Mi
+            memLimit: 512Mi
+          build:
+            cpuRequest: 300m
+            cpuLimit: 500m
+            memRequest: 256Mi
+            memLimit: 512Mi
         port: 8080
       celery:
         enableImageChangeTrigger: true
         imageStreamName: cloudigrade
         imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest: 300m
+            cpuLimit: 500m
+            memRequest: 512Mi
+            memLimit: 1Gi
         replicaCount: 1
-        memoryLimit: 512Mi
       aws:
         sqs:
           defaultRegion: us-east-1
@@ -73,9 +98,6 @@ include:
         databasePort: 5432
         databaseUser:
         databasePassword:
-      build:
-        cpuLimit: 1
-        memLimit: 256Mi
   - name: frontigrade
     values:
       name: frontigrade
@@ -87,11 +109,18 @@ include:
         repoUriBranch: master
         imageStreamName: frontigrade
         imageStreamTag: latest
-        memoryLimit: 512Mi
+        limits:
+          container:
+            cpuRequest: 100m
+            cpuLimit: 500m
+            memRequest: 128Mi
+            memLimit: 256mi
+          build:
+            cpuRequest: 500m
+            cpuLimit: 1
+            memRequest: 512Mi
+            memLimit: 1Gi
         port: 8080
         fancyRouteHost: test.cloudigra.de
         routeHost:
         routePath: /
-      build:
-        cpuLimit: 1
-        memLimit: 1Gi

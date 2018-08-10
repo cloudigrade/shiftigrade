@@ -29,9 +29,15 @@ spec:
         image: ' '
         imagePullPolicy: Always
 {{end}}
+{{if ne .env "local"}}
         resources:
+          request:
+            cpu: {{.frontigrade.limits.container.cpuRequest}}
+            memory: {{.frontigrade.limits.container.memRequest}}
           limits:
-            memory: {{.frontigrade.memoryLimit}}
+            cpu: {{.frontigrade.limits.container.cpuLimit}}
+            memory: {{.frontigrade.limits.container.memLimit}}
+{{end}}
         ports:
         - containerPort: {{.frontigrade.port}}
           protocol: TCP

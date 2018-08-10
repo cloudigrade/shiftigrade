@@ -32,8 +32,11 @@ spec:
 {{if ne .env "local"}}
 {{/* Resource limits are only relevant when we're running in OSD */}}
   resources:
+    request:
+      cpu: {{.frontigrade.limits.build.cpuRequest}}
+      memory: {{.frontigrade.limits.build.memRequest}}
     limits:
-      cpu: {{env "FRONTIGRADE_BC_CPU_LIMIT" | default .build.cpuLimit}}
-      memory: {{env "FRONTIGRADE_BC_MEM_LIMIT" | default .build.memLimit}}
+      cpu: {{.frontigrade.limits.build.cpuLimit}}
+      memory: {{.frontigrade.limits.build.memLimit}}
 {{end}}
 {{end}}
