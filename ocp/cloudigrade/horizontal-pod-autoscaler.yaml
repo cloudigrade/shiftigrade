@@ -1,0 +1,37 @@
+{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{if and (ne .env "local") (ne .env "review")}}
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{$prefix}}{{.name}}-api-cpu
+spec:
+  scaleTargetRef:
+    apiVersion: v1
+    kind: DeploymentConfig
+    name: {{$prefix}}{{.name}}-api
+  minReplicas: {{.api.replicaCount}}
+  maxReplicas: {{.api.replicaCountMax}}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: {{.api.targetAverageCPUUtilization}}
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-{{$prefix}}{{.name}}-celery-worker-cpu
+spec:
+  scaleTargetRef:
+    apiVersion: v1
+    kind: DeploymentConfig
+    name: {{$prefix}}{{.name}}-celery-worker
+  minReplicas: {{.celery.worker.replicaCount}}
+  maxReplicas: {{.celery.worker.replicaCountMax}}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: {{.celery.worker.targetAverageCPUUtilization}}
+{{end}}

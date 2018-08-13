@@ -27,8 +27,10 @@ include:
             memLimit: 512Mi
         fancyRouteHost: stage.cloudigra.de
         replicaCount: 2
+        replicaCountMax: 8
         routeHost:
         routePath: /api/v1/
+        targetAverageCPUUtilization: 80
       auth:
         fancyRouteHost: stage.cloudigra.de
         routeHost:
@@ -64,6 +66,8 @@ include:
               memLimit: 128Mi
         worker:
           replicaCount: 3
+          replicaCountMax: 8
+          targetAverageCPUUtilization: 80
           limits:
             container:
               cpuRequest: 100m
@@ -117,5 +121,7 @@ include:
         port: 8080
         fancyRouteHost: stage.cloudigra.de
         replicaCount: 2
+        replicaCountMax: 6
+        targetAverageCPUUtilization: 80
         routeHost:
         routePath: /
