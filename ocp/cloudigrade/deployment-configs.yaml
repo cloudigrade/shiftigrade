@@ -436,6 +436,11 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
               name: {{$prefix}}{{.name}}
+        - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-persist-inspection-results-schedule
+              name: {{$prefix}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
@@ -662,6 +667,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
+              name: {{$prefix}}{{.name}}
+        - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-persist-inspection-results-schedule
               name: {{$prefix}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:

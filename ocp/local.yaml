@@ -54,6 +54,7 @@ include:
           availabilityZone: us-east-1a
           autoscalingGroupName:
           scaleUpClusterSchedule: 300
+          persistInspectionResultsSchedule: 300
         cloudtrailEventUrl: https://sqs.us-east-1.amazonaws.com/123456789/test-cloudigrade-s3
         s3BucketName: test-cloudigrade-s3
       django:

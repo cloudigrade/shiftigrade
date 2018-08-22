@@ -18,6 +18,7 @@ data:
   aws-houndigrade-availability-zone: {{env "HOUNDIGRADE_AWS_AVAILABILITY_ZONE" | default .aws.houndigrade.availabilityZone}}
   aws-houndigrade-autoscaling-group-name: {{env "HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME" | default .aws.houndigrade.autoscalingGroupName}}
   aws-houndigrade-scale-up-cluster-schedule: {{env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote}}
+  aws-houndigrade-persist-inspection-results-schedule: {{env "PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE" | default .aws.houndigrade.persistInspectionResultsSchedule | quote}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
   aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
 {{if ne .env "local"}}
