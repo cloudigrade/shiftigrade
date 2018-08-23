@@ -21,7 +21,7 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: hpa-{{$prefix}}{{.name}}-celery-worker-cpu
+  name: {{$prefix}}{{.name}}-celery-worker-cpu
 spec:
   scaleTargetRef:
     apiVersion: v1
