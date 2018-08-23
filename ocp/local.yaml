@@ -49,7 +49,8 @@ include:
         houndigrade:
           ecs:
             clusterName:
-            imageName: cloudigrade/houndigrade
+            imageName: registry.gitlab.com/cloudigrade/houndigrade
+            imageTag: latest
             familyName: Houndigrade
           availabilityZone: us-east-1a
           autoscalingGroupName:

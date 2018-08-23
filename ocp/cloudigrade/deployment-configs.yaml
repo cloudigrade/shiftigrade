@@ -147,6 +147,11 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
               name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_TAG
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-tag
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
@@ -416,6 +421,11 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
               name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_TAG
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-tag
+              name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
@@ -647,6 +657,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_TAG
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-tag
               name: {{$prefix}}{{.name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:

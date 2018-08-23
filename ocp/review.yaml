@@ -87,7 +87,8 @@ include:
         houndigrade:
           ecs:
             clusterName: cloudigrade-test-us-east-1b
-            imageName: cloudigrade/houndigrade
+            imageName: registry.gitlab.com/cloudigrade/houndigrade
+            imageTag: latest
             familyName: Houndigrade
           availabilityZone: us-east-1b
           autoscalingGroupName: EC2ContainerService-cloudigrade-test-us-east-1b-EcsInstanceAsg-1W1TT97VE7KD
