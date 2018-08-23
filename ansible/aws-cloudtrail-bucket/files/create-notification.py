@@ -15,9 +15,19 @@ def add_notification(bucket_name, sqs_arn):
     client = boto3.client('s3')
     bucket_notifications_config = {
         'QueueConfigurations': [{
-            'Events': ['s3:ObjectCreated:*'],
             'Id': 'Notifications',
-            'QueueArn': sqs_arn
+            'QueueArn': sqs_arn,
+            'Events': ['s3:ObjectCreated:*'],
+            'Filter': {
+                'Key': {
+                    'FilterRules': [
+                        {
+                            'Name': 'suffix',
+                            'Value': '.json.gz'
+                            },
+                        ]
+                    }
+                },
         }]
     }
     client.put_bucket_notification_configuration(
