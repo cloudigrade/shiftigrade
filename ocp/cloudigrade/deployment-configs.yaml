@@ -177,6 +177,50 @@ spec:
             configMapKeyRef:
               key: aws-s3-bucket-name
               name: {{$prefix}}{{.name}}
+{{if or (env "API_SENTRY_ENABLED") (.api.sentry.enabled)}}
+        - name: ENABLE_SENTRY
+          valueFrom:
+            configMapKeyRef:
+              key: api-sentry-enabled
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              key: api-sentry-dsn
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_SENTRY_RELEASE
+          valueFrom:
+            configMapKeyRef:
+              key: api-sentry-release
+              name: {{$prefix}}{{.name}}
+        - name: DJANGO_SENTRY_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              key: api-sentry-environment
+              name: {{$prefix}}{{.name}}
+{{end}}
+{{if or (env "HOUNDIGRADE_SENTRY_ENABLED") (.aws.houndigrade.sentry.enabled)}}
+        - name: HOUNDIGRADE_ENABLE_SENTRY
+          valueFrom:
+            configMapKeyRef:
+              key: houndigrade-sentry-enabled
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              key: houndigrade-sentry-dsn
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_SENTRY_RELEASE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-tag
+              name: {{$prefix}}{{.name}}
+        - name: HOUNDIGRADE_SENTRY_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              key: houndigrade-sentry-environment
+              name: {{$prefix}}{{.name}}
+{{end}}
 {{if and (ne .env "local") (ne .env "review")}}
         image: {{env "API_IMAGE"}}
 {{else}}
@@ -461,6 +505,28 @@ spec:
             configMapKeyRef:
               key: aws-s3-bucket-name
               name: {{$prefix}}{{.name}}
+{{if or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled)}}
+        - name: ENABLE_SENTRY
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-enabled
+              name: {{$prefix}}{{.name}}
+        - name: CELERY_SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              key: celery-sentry-dsn
+              name: {{$prefix}}{{.name}}
+        - name: CELERY_SENTRY_RELEASE
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-release
+              name: {{$prefix}}{{.name}}
+        - name: CELERY_SENTRY_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-environment
+              name: {{$prefix}}{{.name}}
+{{end}}
 {{if and (ne .env "local") (ne .env "review")}}
         image: {{env "CELERY_IMAGE"}}
 {{else}}
@@ -698,6 +764,28 @@ spec:
             configMapKeyRef:
               key: aws-s3-bucket-name
               name: {{$prefix}}{{.name}}
+{{if or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled)}}
+        - name: ENABLE_SENTRY
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-enabled
+              name: {{$prefix}}{{.name}}
+        - name: CELERY_SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              key: celery-sentry-dsn
+              name: {{$prefix}}{{.name}}
+        - name: CELERY_SENTRY_RELEASE
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-release
+              name: {{$prefix}}{{.name}}
+        - name: CELERY_SENTRY_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-environment
+              name: {{$prefix}}{{.name}}
+{{end}}
 {{if and (ne .env "local") (ne .env "review")}}
         image: {{env "CELERY_IMAGE"}}
 {{else}}

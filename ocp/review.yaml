@@ -31,6 +31,8 @@ include:
         replicaCount: 1
         routeHost:
         routePath: /api/v1/
+        sentry:
+          enabled: false
       auth:
         fancyRouteHost: test.cloudigra.de
         routeHost:
@@ -67,6 +69,8 @@ include:
               cpuLimit: 100m
               memRequest: 64Mi
               memLimit: 128Mi
+        sentry:
+          enabled: false
         worker:
           replicaCount: 1
           limits:
@@ -94,6 +98,8 @@ include:
           autoscalingGroupName: EC2ContainerService-cloudigrade-test-us-east-1b-EcsInstanceAsg-1W1TT97VE7KD
           scaleUpClusterSchedule: 3600
           persistInspectionResultsSchedule: 300
+          sentry:
+            enabled: false
         cloudtrailEventUrl:
         s3BucketName:
       django:
@@ -133,3 +139,5 @@ include:
         replicaCount: 1
         routeHost:
         routePath: /
+        sentry:
+          enabled: false

@@ -23,7 +23,7 @@ data:
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
   aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
 {{if ne .env "local"}}
-  aws-name-prefix:  {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{.aws.sqs.namePrefix}}{{end}}
+  aws-name-prefix: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{.aws.sqs.namePrefix}}{{end}}
   aws-s3-bucket-name: {{env "AWS_S3_BUCKET_NAME" | default .aws.s3BucketName}}
 {{else}}
   aws-name-prefix: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{ env "USER" | printf "%s-" | quote}}{{end}}
@@ -36,5 +36,19 @@ data:
 {{if and (ne .env "local") (ne .env "review")}}
   database-name: {{env "DJANGO_DATABASE_NAME" | default .db.databaseName}}
   database-port: {{env "DJANGO_DATABASE_PORT" | default .db.databasePort | quote}}
+{{end}}
+{{if or (env "API_SENTRY_ENABLED") (.api.sentry.enabled)}}
+  api-sentry-enabled: {{env "API_SENTRY_ENABLED" | default .api.sentry.enabled}}
+  api-sentry-environment: {{env "API_SENTRY_ENVIRONMENT"}}
+  api-sentry-release: {{env "API_SENTRY_RELEASE"}}
+{{end}}
+{{if or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled)}}
+  celery-sentry-enabled: {{env "CELERY_SENTRY_ENABLED" | default .celery.sentry.enabled}}
+  celery-sentry-environment: {{env "CELERY_SENTRY_ENVIRONMENT"}}
+  celery-sentry-release: {{env "CELERY_SENTRY_RELEASE"}}
+{{end}}
+{{if or (env "HOUNDIGRADE_SENTRY_ENABLED") (.aws.houndigrade.sentry.enabled)}}
+  houndigrade-sentry-enabled: {{env "HOUNDIGRADE_SENTRY_ENABLED" | default .aws.houndigrade.sentry.enabled}}
+  houndigrade-sentry-environment: {{env "HOUNDIGRADE_SENTRY_ENVIRONMENT"}}
 {{end}}
 type: Opaque

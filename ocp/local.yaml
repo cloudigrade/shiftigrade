@@ -18,6 +18,8 @@ include:
         replicaCount: 1
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /api/v1/
+        sentry:
+          enabled: false
       auth:
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /auth/
@@ -36,6 +38,8 @@ include:
         imageStreamTag: latest
         beat:
           replicaCount: 1
+        sentry:
+          enabled: false
         worker:
           replicaCount: 1
       aws:
@@ -56,6 +60,8 @@ include:
           autoscalingGroupName:
           scaleUpClusterSchedule: 300
           persistInspectionResultsSchedule: 300
+          sentry:
+            enabled: false
         cloudtrailEventUrl: https://sqs.us-east-1.amazonaws.com/123456789/test-cloudigrade-s3
         s3BucketName: test-cloudigrade-s3
       django:
@@ -83,3 +89,5 @@ include:
         replicaCount: 1
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /
+        sentry:
+          enabled: false
