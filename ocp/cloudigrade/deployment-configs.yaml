@@ -178,7 +178,7 @@ spec:
               key: aws-s3-bucket-name
               name: {{$prefix}}{{.name}}
 {{if or (env "API_SENTRY_ENABLED") (.api.sentry.enabled)}}
-        - name: ENABLE_SENTRY
+        - name: API_ENABLE_SENTRY
           valueFrom:
             configMapKeyRef:
               key: api-sentry-enabled
@@ -506,7 +506,7 @@ spec:
               key: aws-s3-bucket-name
               name: {{$prefix}}{{.name}}
 {{if or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled)}}
-        - name: ENABLE_SENTRY
+        - name: CELERY_ENABLE_SENTRY
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-enabled
@@ -765,7 +765,7 @@ spec:
               key: aws-s3-bucket-name
               name: {{$prefix}}{{.name}}
 {{if or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled)}}
-        - name: ENABLE_SENTRY
+        - name: CELERY_ENABLE_SENTRY
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-enabled
