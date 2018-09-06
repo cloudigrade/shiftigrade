@@ -98,11 +98,11 @@ oc-clean: oc-down
 	$(PREFIX) rm -rf $(OC_DATA_DIR)
 
 oc-user:
-	oc rsh -c cloudigrade-api $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=cloudigrade-api) scl enable rh-postgresql96 rh-python36 -- python manage.py createsuperuser
+	oc rsh -c cloudigrade-api $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=cloudigrade-api) scl enable rh-python36 -- python manage.py createsuperuser
 
 oc-user-authenticate:
 	@read -p "User name: " uname; \
-	oc rsh -c cloudigrade-api $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=cloudigrade-api) scl enable rh-postgresql96 rh-python36 -- python manage.py drf_create_token $$uname
+	oc rsh -c cloudigrade-api $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=cloudigrade-api) scl enable rh-python36 -- python manage.py drf_create_token $$uname
 
 oc-check-cluster:
 	while true; do oc cluster status > /dev/null; if [ $$? == "0" ]; then echo "Cluster is up!"; break; fi; echo "Waiting for cluster to start up..."; sleep 5; done;
