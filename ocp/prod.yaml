@@ -4,12 +4,7 @@ global:
   namespace: cloudigrade-prod
   fancyDomain: true
   fancyDomainTLS: true
-  tls:
-    ca:
-    cert:
-    certKey:
-    insecureEdgeTerminationPolicy: Redirect
-    termination: edge
+  tls: true
 include:
   - name: cloudigrade
     values:

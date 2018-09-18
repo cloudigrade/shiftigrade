@@ -1,10 +1,10 @@
-# TODO: Actually use this.
 ---
 global:
   env: review
   namespace: cloudigrade-review
   fancyDomain: false
   fancyDomainTLS: false
+  tls: true
 include:
   - name: cloudigrade
     values:

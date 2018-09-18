@@ -5,6 +5,14 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{$prefix}}{{.name}}-api-cpu
+  labels:
+{{if (env "CI_ENVIRONMENT_SLUG")}}
+    app: {{env "CI_ENVIRONMENT_SLUG"}}
+{{end}}
+    deployment: {{$prefix}}{{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 spec:
   scaleTargetRef:
     apiVersion: v1
@@ -22,6 +30,14 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{$prefix}}{{.name}}-celery-worker-cpu
+  labels:
+{{if (env "CI_ENVIRONMENT_SLUG")}}
+    app: {{env "CI_ENVIRONMENT_SLUG"}}
+{{end}}
+    deployment: {{$prefix}}{{.name}}-deployment
+{{if (env "GITLAB_DEPLOYMENT")}}
+    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+{{end}}
 spec:
   scaleTargetRef:
     apiVersion: v1

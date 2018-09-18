@@ -4,6 +4,7 @@ global:
   namespace: myproject
   fancyDomain: false
   fancyDomainTLS: false
+  tls: false
 include:
   - name: cloudigrade
     values:
