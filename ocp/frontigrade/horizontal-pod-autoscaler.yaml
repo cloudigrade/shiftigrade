@@ -6,8 +6,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{$prefix}}{{.name}}-cpu
   labels:
-{{if (env "CI_ENVIRONMENT_SLUG")}}
-    app: {{env "CI_ENVIRONMENT_SLUG"}}
+{{if (env "CI_COMMIT_REF_SLUG")}}
+    app: {{env "CI_COMMIT_REF_SLUG"}}
 {{end}}
     deployment: {{$prefix}}{{.name}}-deployment
 {{if (env "GITLAB_DEPLOYMENT")}}
