@@ -2,14 +2,36 @@
 shiftigrade
 ***********
 
-|license| |Build Status|
-
-
 What is shiftigrade?
 ====================
 
 **shiftigrade** is a set of deployment instructions for **cloudigrade** and friends.
 
+
+Our Environments
+~~~~~~~~~~~~~~~~
+
+.. csv-table::
+    :header: "Environments", "CORS", "Database", "URL", "Notes"
+
+    "Production", "Strict", "RDS", "https://www.cloudigra.de/ or https://cloudigrade-prod.1b13.insights.openshiftapps.com/", "Deployed from tagged docker image in GitLab."
+    "Stage", "Strict", "RDS", "https://stage.cloudigra.de/ or https://cloudigrade-stage.1b13.insights.openshiftapps.com/", "Deployed from tagged docker image in GitLab."
+    "Test", "Strict", "RDS", "https://test.cloudigra.de/ or https://cloudigrade-test.1b13.insights.openshiftapps.com/", "Deployed from tagged docker image in GitLab."
+    "Review", "Relaxed", "Ephemeral Postgres", "https://cloudireview-${BRANCH_NAME}.1b13.insights.openshiftapps.com/", "Built from branch inside the OSD cluster."
+    "Local", "Relaxed", "Persistent Postgres", "http://127.0.0.1.nip.io/", "Built and run in local OCP cluster."
+
+How do automated deployments work?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Production, Stage, and Test are considered our `production-like` environments.
+
+Deployment to test starts as soon as anything in `cloudigrade` or `frontigrade` repos land on master, after tests pass and docker images are built, the docker image tagged with that commit sha will be deployed to test.
+
+Deployment to stage, and in turn prod, is a little more manual. To deploy code to stage you have to create a tag in either the `cloudigrade` or `frontigrade` repo, depending on which one is being deployed. As before, CI will run, `tagged` docker images will be built and pushed to the registry, and a deployment to stage will be maid using the tagged image. Once the code in stage is ready to be promoted to production, simply press play on the `Deploy to Production` step in the respective GitLab CI pipeline page, this will kick off the deployment to production.
+
+Review environments are a little different, they are created when a new branch is created and pushed to GitLab. They also do not use GitLab built images, but instead build images themselves in the OSD cluster where they are deployed. To stop an environment, simply activate the `Clean-Up-Review` job in the branch pipeline. If you are working on both `Cloudigrade` and `Frontigrade` and want them both to be able to interact with each other, make sure that your branches are called the same thing in both repos, as that dictates how they get deployed and named.
+
+The local environment is the one that runs on your own machine, deployed by you, using the instructions below.
 
 Running cloudigrade
 ===================
@@ -190,9 +212,3 @@ If the cloudigrade deployment also failed because the database was not available
 .. code-block:: bash
 
     oc rollout retry dc/cloudigrade
-
-
-.. |license| image:: https://img.shields.io/github/license/cloudigrade/shiftigrade.svg
-   :target: https://github.com/cloudigrade/shiftigrade/blob/master/LICENSE
-.. |Build Status| image:: https://travis-ci.org/cloudigrade/shiftigrade.svg?branch=master
-   :target: https://travis-ci.org/cloudigrade/shiftigrade
