@@ -48,6 +48,7 @@ include:
           defaultRegion: us-east-1
           accessKeyId: 123
           secretAccessKey: 456
+          maxReceiveCount: 5
         defaultRegion: us-east-1
         accessKeyId: 123
         secretAccessKey: 456

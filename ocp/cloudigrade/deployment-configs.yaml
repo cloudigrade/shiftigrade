@@ -67,6 +67,11 @@ spec:
             configMapKeyRef:
               key: aws-sqs-region
               name: {{$prefix}}{{.name}}
+        - name: AWS_SQS_MAX_RECEIVE_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-receive-count
+              name: {{$prefix}}{{.name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
@@ -388,6 +393,11 @@ spec:
             configMapKeyRef:
               key: aws-sqs-region
               name: {{$prefix}}{{.name}}
+        - name: AWS_SQS_MAX_RECEIVE_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-receive-count
+              name: {{$prefix}}{{.name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
@@ -649,6 +659,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-region
+              name: {{$prefix}}{{.name}}
+        - name: AWS_SQS_MAX_RECEIVE_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-receive-count
               name: {{$prefix}}{{.name}}
         - name: AWS_NAME_PREFIX
           valueFrom:

@@ -79,6 +79,7 @@ include:
           accessKeyId:
           secretAccessKey:
           namePrefix: prod-
+          maxReceiveCount: 5
         defaultRegion: us-east-1
         accessKeyId:
         secretAccessKey:

@@ -85,6 +85,7 @@ include:
           accessKeyId:
           secretAccessKey:
           namePrefix: test-
+          maxReceiveCount: 5
         defaultRegion: us-east-1
         accessKeyId:
         secretAccessKey:
