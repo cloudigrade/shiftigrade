@@ -25,7 +25,7 @@ data:
   aws-houndigrade-persist-inspection-results-schedule: {{env "PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE" | default .aws.houndigrade.persistInspectionResultsSchedule | quote}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
   aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
-  aws-sqs-max-receive-count: {{env "AWS_SQS_MAX_RECEIVE_COUNT" | default .aws.sqs.maxReceiveCount}}
+  aws-sqs-max-receive-count: {{env "AWS_SQS_MAX_RECEIVE_COUNT" | default .aws.sqs.maxReceiveCount | quote}}
 {{if ne .env "local"}}
   aws-name-prefix: {{if (env "DEPLOYMENT_PREFIX")}}{{env "DEPLOYMENT_PREFIX" | quote}}{{else}}{{.aws.sqs.namePrefix}}{{end}}
   aws-s3-bucket-name: {{env "AWS_S3_BUCKET_NAME" | default .aws.s3BucketName}}
