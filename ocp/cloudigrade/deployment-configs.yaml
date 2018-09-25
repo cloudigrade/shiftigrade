@@ -25,7 +25,7 @@ spec:
           - scl
           - enable
           - rh-python36
-          - ./manage.py migrate
+          - ./manage.py configurequeues && ./manage.py migrate
           containerName: {{$prefix}}{{.name}}-api
         failurePolicy: Abort
     type: Recreate
