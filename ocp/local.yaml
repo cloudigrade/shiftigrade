@@ -65,6 +65,7 @@ include:
           sentry:
             enabled: false
         cloudtrailEventUrl: https://sqs.us-east-1.amazonaws.com/123456789/test-cloudigrade-s3
+        repopulateEc2InstanceMappingSchedule: 604800
         s3BucketName: test-cloudigrade-s3
       django:
         debug: true

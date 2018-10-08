@@ -102,6 +102,7 @@ include:
           sentry:
             enabled: false
         cloudtrailEventUrl:
+        repopulateEc2InstanceMappingSchedule: 604800
         s3BucketName:
       django:
         debug: false

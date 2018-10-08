@@ -96,6 +96,7 @@ include:
           sentry:
             enabled: true
         cloudtrailEventUrl:
+        repopulateEc2InstanceMappingSchedule: 604800
         s3BucketName: prod-cloudigrade
       django:
         debug: false

@@ -97,6 +97,7 @@ include:
             enabled: true
         cloudtrailEventUrl:
         s3BucketName: test-cloudigrade
+        repopulateEc2InstanceMappingSchedule: 604800
       django:
         debug: false
         allowedHosts: '*'

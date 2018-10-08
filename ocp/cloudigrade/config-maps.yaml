@@ -23,6 +23,7 @@ data:
   aws-houndigrade-autoscaling-group-name: {{env "HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME" | default .aws.houndigrade.autoscalingGroupName}}
   aws-houndigrade-scale-up-cluster-schedule: {{env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote}}
   aws-houndigrade-persist-inspection-results-schedule: {{env "PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE" | default .aws.houndigrade.persistInspectionResultsSchedule | quote}}
+  aws-repopulate-ec2-instance-mapping-schedule: {{env "REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE" | default .aws.repopulateEc2InstanceMappingSchedule | quote}}
   aws-sqs-region: {{.aws.sqs.defaultRegion}}
   aws-cloudtrail-event-url: {{env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl}}
   aws-sqs-max-receive-count: {{env "AWS_SQS_MAX_RECEIVE_COUNT" | default .aws.sqs.maxReceiveCount | quote}}

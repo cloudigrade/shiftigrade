@@ -511,6 +511,11 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-persist-inspection-results-schedule
               name: {{$prefix}}{{.name}}
+        - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-repopulate-ec2-instance-mapping-schedule
+              name: {{$prefix}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
@@ -777,6 +782,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-persist-inspection-results-schedule
+              name: {{$prefix}}{{.name}}
+        - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-repopulate-ec2-instance-mapping-schedule
               name: {{$prefix}}{{.name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
