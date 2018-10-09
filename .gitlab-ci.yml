@@ -1,7 +1,31 @@
-image: registry.gitlab.com/cloudigrade/images/deploy-container:latest
+stages:
+  - build
+  - test
+  - deploy
 
+# Global Variables
+variables:
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: registry.gitlab.com/${CI_PROJECT_PATH}
+  IMAGE_NAME_COMMIT: registry.gitlab.com/${CI_PROJECT_PATH}/commits/${CI_PROJECT_NAME}:${CI_BUILD_REF}
+
+# Build Stage
+Push Commit Image:
+  stage: build
+  image: docker:stable
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  script:
+    - docker pull ${IMAGE_NAME}:latest || true
+    - docker build --cache-from ${IMAGE_NAME}:latest --tag ${IMAGE_NAME_COMMIT} .
+    - docker push ${IMAGE_NAME_COMMIT}
+
+# Test Stage
 Test Templates:
   stage: test
+  image: ${IMAGE_NAME_COMMIT}
   before_script:
     - oc version
     - oc login ${KUBE_URL} --token=${KUBE_TOKEN}
@@ -13,9 +37,38 @@ Test Templates:
     - kontemplate template ocp/prod.yaml | oc apply --dry-run -f -
 
 Test Ansible Playbooks:
-  image: python:latest
   stage: test
-  before_script:
-    - pip install ansible
+  image: ${IMAGE_NAME_COMMIT}
   script:
     - ansible-playbook --syntax-check ansible/*.yaml
+
+# Deploy Stage
+Push Latest Image:
+  stage: deploy
+  image: docker:stable
+  services:
+    - docker:dind
+  only:
+    - master@cloudigrade/cloudigrade
+  except:
+    - tags@cloudigrade/cloudigrade
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  script:
+    - docker pull ${IMAGE_NAME_COMMIT} || true
+    - docker build --cache-from ${IMAGE_NAME_COMMIT} --tag ${IMAGE_NAME}:latest .
+    - docker push ${IMAGE_NAME}:latest
+
+Push Tagged Image:
+  stage: deploy
+  image: docker:stable
+  services:
+    - docker:dind
+  only:
+    - tags@cloudigrade/cloudigrade
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  script:
+    - docker pull ${IMAGE_NAME_COMMIT} || true
+    - docker build --cache-from ${IMAGE_NAME_COMMIT} --tag ${IMAGE_NAME}:${CI_COMMIT_TAG} .
+    - docker push ${IMAGE_NAME}:${CI_COMMIT_TAG}
