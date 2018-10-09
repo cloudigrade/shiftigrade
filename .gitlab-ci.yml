@@ -49,9 +49,9 @@ Push Latest Image:
   services:
     - docker:dind
   only:
-    - master@cloudigrade/cloudigrade
+    - master@cloudigrade/shiftigrade
   except:
-    - tags@cloudigrade/cloudigrade
+    - tags@cloudigrade/shiftigrade
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
   script:
@@ -65,7 +65,7 @@ Push Tagged Image:
   services:
     - docker:dind
   only:
-    - tags@cloudigrade/cloudigrade
+    - tags@cloudigrade/shiftigrade
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
   script:
