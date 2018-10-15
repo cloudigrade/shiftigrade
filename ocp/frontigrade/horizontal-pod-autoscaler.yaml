@@ -1,28 +1,37 @@
-{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
 {{if and (ne .env "local") (ne .env "review")}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$frontigrade_replicaCount := .frontigrade.replicaCount}}
+{{$frontigrade_replicaCountMax := .frontigrade.replicaCountMax}}
+{{$frontigrade_targetAverageCPUUtilization := .frontigrade.targetAverageCPUUtilization}}
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{$prefix}}{{.name}}-cpu
+  name: {{$name}}-cpu
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
   scaleTargetRef:
     apiVersion: v1
     kind: DeploymentConfig
-    name: {{$prefix}}{{.name}}
-  minReplicas: {{.frontigrade.replicaCount}}
-  maxReplicas: {{.frontigrade.replicaCountMax}}
+    name: {{$name}}
+  minReplicas: {{$frontigrade_replicaCount}}
+  maxReplicas: {{$frontigrade_replicaCountMax}}
   metrics:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: {{.frontigrade.targetAverageCPUUtilization}}
+      targetAverageUtilization: {{$frontigrade_targetAverageCPUUtilization}}
 {{end}}

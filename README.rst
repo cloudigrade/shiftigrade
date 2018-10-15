@@ -37,6 +37,22 @@ There is also a second flavor of a review environment, one that deploys the mast
 
 The other method of deploying is via `gitlab triggers <https://docs.gitlab.com/ee/ci/triggers/#triggering-a-pipeline>`_, make sure to specify the name of the deployment with the `CHAT_INPUT` variable name. If you'd like to clean up the deployment, just run the `Clean up master review` job from the pipeline page.
 
+Names
+~~~~~
+
+To accommodate as verbose of branch names as possible for our automated review environments, we had to compact our names a little bit. Here is a quick explanation of the prefixes and suffixes used.
+
+Prefix:
+
+- ``c-`` denotes **c**\ loudigrade
+- ``f-`` denotes **f**\ rontigrade
+
+Suffix:
+
+- ``-a`` for cloudigrade **a**\ pi
+- ``-b`` for celery **b**\ eat
+- ``-w`` for celery **w**\ orkers
+
 Running cloudigrade
 ===================
 

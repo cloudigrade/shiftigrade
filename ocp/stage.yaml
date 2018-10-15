@@ -8,11 +8,11 @@ global:
 include:
   - name: cloudigrade
     values:
-      name: cloudigrade
+      name: c
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
       api:
         enableImageChangeTrigger: true
-        imageStreamName: cloudigrade
+        imageStreamName: c
         imageStreamTag: latest
         limits:
           container:
@@ -34,7 +34,7 @@ include:
         routePath: /auth/
       nginx:
         enableImageChangeTrigger: true
-        imageStreamName: cloudigrade-nginx
+        imageStreamName: c-nginx
         imageStreamTag: latest
         limits:
           container:
@@ -45,7 +45,7 @@ include:
         port: 8080
       celery:
         enableImageChangeTrigger: true
-        imageStreamName: cloudigrade
+        imageStreamName: c
         imageStreamTag: latest
         limits:
           container:
@@ -112,7 +112,7 @@ include:
         databasePassword:
   - name: frontigrade
     values:
-      name: frontigrade
+      name: f
       frontigrade:
         enableImageChangeTrigger: true
         imageStreamName: frontigrade

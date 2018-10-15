@@ -1,58 +1,72 @@
-{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$frontigrade_route_host := (env "FRONTIGRADE_ROUTE_HOST" | default .frontigrade.routeHost)}}
+{{$frontigrade_route_path := (env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath)}}
+
+{{$tls := .tls}}
+
+{{$fancy_domain := .fancyDomain}}
+{{$fancy_domain_tls := (.fancyDomainTLS | quote)}}
+{{$frontigrade_fancy_route_host := (env "FRONTIGRADE_FANCY_ROUTE_HOST" | default .frontigrade.fancyRouteHost)}}
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}
+  name: {{$name}}
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
-{{if or (env "FRONTIGRADE_ROUTE_HOST") (.frontigrade.routeHost)}}
-  host: {{env "FRONTIGRADE_ROUTE_HOST" | default .frontigrade.routeHost}}
+{{if $frontigrade_route_host}}
+  host: {{$frontigrade_route_host}}
 {{end}}
-  path: {{env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath}}
+  path: {{$frontigrade_route_path}}
   port:
-    targetPort: {{$prefix}}{{.name}}
-{{if .tls}}
+    targetPort: {{$name}}
+{{if $tls}}
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
 {{end}}
   to:
     kind: Service
-    name: {{$prefix}}{{.name}}
+    name: {{$name}}
     weight: 100
   wildcardPolicy: None
-{{if .fancyDomain}}
+{{if $fancy_domain}}
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-fancy
+  name: {{$name}}-f
   annotations:
-    kubernetes.io/tls-acme: {{.fancyDomainTLS | quote}}
+    kubernetes.io/tls-acme: {{$fancy_domain_tls}}
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
-  host: {{env "FRONTIGRADE_FANCY_ROUTE_PATH" | default .frontigrade.fancyRouteHost}}
-  path: {{env "FRONTIGRADE_ROUTE_PATH" | default .frontigrade.routePath}}
+  host: {{$frontigrade_fancy_route_host}}
+  path: {{$frontigrade_route_path}}
   port:
-    targetPort: {{$prefix}}{{.name}}
+    targetPort: {{$name}}
   to:
     kind: Service
-    name: {{$prefix}}{{.name}}
+    name: {{$name}}
     weight: 100
   wildcardPolicy: None
 {{end}}

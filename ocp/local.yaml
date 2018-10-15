@@ -8,20 +8,33 @@ global:
 include:
   - name: cloudigrade
     values:
-      name: cloudigrade
+      name: c
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
       api:
         enableImageChangeTrigger: true
+        fancyRouteHost:
         repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
         repoUriBranch: master
-        imageStreamName: cloudigrade
+        imageStreamName: c
         imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest:
+            cpuLimit:
+            memRequest:
+            memLimit:
+          build:
+            cpuRequest:
+            cpuLimit:
+            memRequest:
+            memLimit:
         replicaCount: 1
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /api/v1/
         sentry:
           enabled: false
       auth:
+        fancyRouteHost:
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /auth/
       nginx:
@@ -30,25 +43,59 @@ include:
         repoUriBranch: master
         repoContextDir: deployment/dev/
         baseImage: centos/nginx-112-centos7:latest
-        imageStreamName: cloudigrade-nginx
+        imageStreamName: c-nginx
         imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest:
+            cpuLimit:
+            memRequest:
+            memLimit:
+          build:
+            cpuRequest:
+            cpuLimit:
+            memRequest:
+            memLimit:
         port: 8080
       celery:
         enableImageChangeTrigger: true
-        imageStreamName: cloudigrade
+        imageStreamName: c
         imageStreamTag: latest
         beat:
           replicaCount: 1
+          limits:
+            container:
+              cpuRequest:
+              cpuLimit:
+              memRequest:
+              memLimit:
+            build:
+              cpuRequest:
+              cpuLimit:
+              memRequest:
+              memLimit:
         sentry:
           enabled: false
         worker:
           replicaCount: 1
+          limits:
+            container:
+              cpuRequest:
+              cpuLimit:
+              memRequest:
+              memLimit:
+            build:
+              cpuRequest:
+              cpuLimit:
+              memRequest:
+              memLimit:
       aws:
         sqs:
           defaultRegion: us-east-1
           accessKeyId: 123
           secretAccessKey: 456
           maxReceiveCount: 5
+          namePrefix:
         defaultRegion: us-east-1
         accessKeyId: 123
         secretAccessKey: 456
@@ -81,14 +128,26 @@ include:
         databasePort: 5432
   - name: frontigrade
     values:
-      name: frontigrade
+      name: f
       frontigrade:
         enableImageChangeTrigger: true
         repoUri: https://gitlab.com/cloudigrade/frontigrade.git
         repoUriBranch: master
-        imageStreamName: frontigrade
+        imageStreamName: f
         imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest:
+            cpuLimit:
+            memRequest:
+            memLimit:
+          build:
+            cpuRequest:
+            cpuLimit:
+            memRequest:
+            memLimit:
         port: 8080
+        fancyRouteHost:
         replicaCount: 1
         routeHost: cloudigrade.127.0.0.1.nip.io
         routePath: /

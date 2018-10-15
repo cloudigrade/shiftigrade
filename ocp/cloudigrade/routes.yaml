@@ -1,113 +1,134 @@
-{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$api_route_host := (env "API_ROUTE_HOST" | default .api.routeHost)}}
+{{$api_route_path := (env "API_ROUTE_PATH" | default .api.routePath)}}
+
+{{$auth_route_host := (env "AUTH_ROUTE_HOST" | default .auth.routeHost)}}
+{{$auth_route_path := (env "AUTH_ROUTE_PATH" | default .auth.routePath)}}
+
+{{$api_target_port := printf "c%s-nginx" $prefix}}
+
+{{$tls := .tls}}
+
+{{$fancy_domain := .fancyDomain}}
+{{$fancy_domain_tls := (.fancyDomainTLS | quote)}}
+{{$api_fancy_route_host := (env "API_FANCY_ROUTE_HOST" | default .api.fancyRouteHost)}}
+{{$auth_fancy_route_host := (env "AUTH_FANCY_ROUTE_HOST" | default .auth.fancyRouteHost)}}
+
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-api
+  name: {{$name}}-api
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
-{{if or (env "API_ROUTE_HOST") (.api.routeHost)}}
-  host: {{env "API_ROUTE_HOST" | default .api.routeHost}}
+{{if $api_route_host}}
+  host: {{$api_route_host}}
 {{end}}
-  path: {{env "API_ROUTE_PATH" | default .api.routePath}}
+  path: {{$api_route_path}}
   port:
-    targetPort: {{$prefix}}nginx
-{{if .tls}}
+    targetPort: {{$api_target_port}}
+{{if $tls}}
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
 {{end}}
   to:
     kind: Service
-    name: {{$prefix}}{{.name}}-api
+    name: {{$name}}-api
     weight: 100
   wildcardPolicy: None
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-auth
+  name: {{$name}}-auth
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
-{{if or (env "AUTH_ROUTE_HOST") (.auth.routeHost)}}
-  host: {{env "AUTH_ROUTE_HOST" | default .auth.routeHost}}
+{{if $auth_route_host}}
+  host: {{$auth_route_host}}
 {{end}}
-  path: {{env "AUTH_ROUTE_PATH" | default .auth.routePath}}
+  path: {{$auth_route_path}}
   port:
-    targetPort: {{$prefix}}nginx
-{{if .tls}}
+    targetPort: {{$api_target_port}}
+{{if $tls}}
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
 {{end}}
   to:
     kind: Service
-    name: {{$prefix}}{{.name}}-api
+    name: {{$name}}-api
     weight: 100
   wildcardPolicy: None
-{{if .fancyDomain}}
+{{if $fancy_domain}}
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-api-fancy
+  name: {{$name}}-api-f
   annotations:
-    kubernetes.io/tls-acme: {{.fancyDomainTLS | quote}}
+    kubernetes.io/tls-acme: {{$fancy_domain_tls}}
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
-  host: {{env "API_FANCY_ROUTE_PATH" | default .api.fancyRouteHost}}
-  path: {{env "API_ROUTE_PATH" | default .api.routePath}}
+  host: {{$api_fancy_route_host}}
+  path: {{$api_route_path}}
   port:
-    targetPort: {{$prefix}}nginx
+    targetPort: {{$api_target_port}}
   to:
     kind: Service
-    name: {{$prefix}}{{.name}}-api
+    name: {{$name}}-api
     weight: 100
   wildcardPolicy: None
 ---
 kind: Route
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-auth-fancy
+  name: {{$name}}-auth-f
   annotations:
-    kubernetes.io/tls-acme: {{.fancyDomainTLS | quote}}
+    kubernetes.io/tls-acme: {{$fancy_domain_tls}}
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
-  host: {{env "AUTH_FANCY_ROUTE_PATH" | default .auth.fancyRouteHost}}
-  path: {{env "AUTH_ROUTE_PATH" | default .auth.routePath}}
+  host: {{$auth_fancy_route_host}}
+  path: {{$auth_route_path}}
   port:
-    targetPort: {{$prefix}}nginx
+    targetPort: {{$api_target_port}}
   to:
     kind: Service
-    name: {{$prefix}}{{.name}}-api
+    name: {{$name}}-api
     weight: 100
   wildcardPolicy: None
 {{end}}

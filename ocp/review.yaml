@@ -8,13 +8,13 @@ global:
 include:
   - name: cloudigrade
     values:
-      name: cloudigrade
+      name: c
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
       api:
         enableImageChangeTrigger: true
         repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
         repoUriBranch: master
-        imageStreamName: cloudigrade
+        imageStreamName: c
         imageStreamTag: latest
         limits:
           container:
@@ -27,14 +27,14 @@ include:
             cpuLimit: 1
             memRequest: 512Mi
             memLimit: 768Mi
-        fancyRouteHost: test.cloudigra.de
+        fancyRouteHost:
         replicaCount: 1
         routeHost:
         routePath: /api/v1/
         sentry:
           enabled: false
       auth:
-        fancyRouteHost: test.cloudigra.de
+        fancyRouteHost:
         routeHost:
         routePath: /auth/
       nginx:
@@ -43,7 +43,7 @@ include:
         repoUriBranch: master
         repoContextDir: deployment/dev/
         baseImage: centos/nginx-112-centos7:latest
-        imageStreamName: cloudigrade-nginx
+        imageStreamName: c-nginx
         imageStreamTag: latest
         limits:
           container:
@@ -59,7 +59,7 @@ include:
         port: 8080
       celery:
         enableImageChangeTrigger: true
-        imageStreamName: cloudigrade
+        imageStreamName: c
         imageStreamTag: latest
         beat:
           replicaCount: 1
@@ -118,12 +118,12 @@ include:
         databasePassword:
   - name: frontigrade
     values:
-      name: frontigrade
+      name: f
       frontigrade:
         enableImageChangeTrigger: true
         repoUri: https://gitlab.com/cloudigrade/frontigrade.git
         repoUriBranch: master
-        imageStreamName: frontigrade
+        imageStreamName: f
         imageStreamTag: latest
         limits:
           container:
@@ -137,7 +137,7 @@ include:
             memRequest: 512Mi
             memLimit: 1Gi
         port: 8080
-        fancyRouteHost: test.cloudigra.de
+        fancyRouteHost:
         replicaCount: 1
         routeHost:
         routePath: /

@@ -1,24 +1,31 @@
-{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$frontigrade_port := .frontigrade.port}}
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}
+  name: {{$name}}
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
   selector:
-    name: {{$prefix}}{{.name}}
+    name: {{$name}}
   ports:
-  - name: {{$prefix}}{{.name}}
+  - name: {{$name}}
     port: 80
     protocol: TCP
-    targetPort: {{.frontigrade.port}}
+    targetPort: {{$frontigrade_port}}
   sessionAffinity: None
   type: ClusterIP

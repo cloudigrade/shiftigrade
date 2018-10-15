@@ -1,21 +1,82 @@
-{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$not_local := ne .env "local"}}
+{{$local_or_review := or (eq .env "local") (eq .env "review")}}
+{{$not_local_or_review := and (ne .env "local") (ne .env "review")}}
+
+{{$api_sentry_enabled := (or (env "API_SENTRY_ENABLED") (.api.sentry.enabled))}}
+{{$celery_sentry_enabled := (or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled))}}
+{{$houndigrade_sentry_enabled := (or (env "HOUNDIGRADE_SENTRY_ENABLED") (.aws.houndigrade.sentry.enabled))}}
+
+{{$api_imagestream_name := printf "%s%s" .api.imageStreamName $prefix}}
+{{$nginx_imagestream_name := printf "%s%s" .nginx.imageStreamName $prefix}}
+{{$celery_imagestream_name := printf "%s%s" .celery.imageStreamName $prefix}}
+
+{{$api_imagestream_tag := .api.imageStreamTag}}
+{{$nginx_imagestream_tag := .nginx.imageStreamTag}}
+{{$celery_imagestream_tag := .celery.imageStreamTag}}
+
+{{$api_image := env "API_IMAGE"}}
+{{$nginx_image := env "NGINX_IMAGE"}}
+{{$celery_image := env "CELERY_IMAGE"}}
+
+{{$api_image_change_trigger := .api.enableImageChangeTrigger}}
+{{$nginx_image_change_trigger := .nginx.enableImageChangeTrigger}}
+{{$celery_image_change_trigger := .celery.enableImageChangeTrigger}}
+
+{{$api_replica_count := .api.replicaCount}}
+{{$celery_beat_replica_count := .celery.beat.replicaCount}}
+{{$celery_worker_replica_count := .celery.worker.replicaCount}}
+
+{{$api_target_port := printf "c%s-nginx" $prefix}}
+{{$nginx_port := .nginx.port}}
+
+{{$health_check_host_header := .healthCheckHostHeader}}
+
+{{$db_secrets_file_name := env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+
+{{$api_limits_container_cpu_request := .api.limits.container.cpuRequest}}
+{{$api_limits_container_mem_request := .api.limits.container.memRequest}}
+{{$api_limits_container_cpu_limit := .api.limits.container.cpuLimit}}
+{{$api_limits_container_mem_limit := .api.limits.container.memLimit}}
+
+{{$nginx_limits_container_cpu_request := .nginx.limits.container.cpuRequest}}
+{{$nginx_limits_container_mem_request := .nginx.limits.container.memRequest}}
+{{$nginx_limits_container_cpu_limit := .nginx.limits.container.cpuLimit}}
+{{$nginx_limits_container_mem_limit := .nginx.limits.container.memLimit}}
+
+{{$celery_beat_limits_container_cpu_request := .celery.beat.limits.container.cpuRequest}}
+{{$celery_beat_limits_container_mem_request := .celery.beat.limits.container.memRequest}}
+{{$celery_beat_limits_container_cpu_limit := .celery.beat.limits.container.cpuLimit}}
+{{$celery_beat_limits_container_mem_limit := .celery.beat.limits.container.memLimit}}
+
+{{$celery_worker_limits_container_cpu_request := .celery.worker.limits.container.cpuRequest}}
+{{$celery_worker_limits_container_mem_request := .celery.worker.limits.container.memRequest}}
+{{$celery_worker_limits_container_cpu_limit := .celery.worker.limits.container.cpuLimit}}
+{{$celery_worker_limits_container_mem_limit := .celery.worker.limits.container.memLimit}}
+
 ---
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-api
+  name: {{$name}}-a
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
   selector:
-    name: {{$prefix}}{{.name}}-api
-  replicas: {{.api.replicaCount}}
+    name: {{$name}}-a
+  replicas: {{$api_replica_count}}
   revisionHistoryLimit: 10
   strategy:
     recreateParams:
@@ -26,223 +87,223 @@ spec:
           - enable
           - rh-python36
           - ./manage.py configurequeues && ./manage.py migrate
-          containerName: {{$prefix}}{{.name}}-api
+          containerName: {{$name}}-a
         failurePolicy: Abort
     type: Recreate
   template:
     metadata:
       labels:
-        name: {{$prefix}}{{.name}}-api
+        name: {{$name}}-a
     spec:
       containers:
-      - name: {{$prefix}}{{.name}}-api
+      - name: {{$name}}-a
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-access-key-id
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-secret-access-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_DEFAULT_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-default-region
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-sqs-access-key-id
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-sqs-secret-access-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-region
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_MAX_RECEIVE_COUNT
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-max-receive-count
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
               key: aws-name-prefix
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SETTINGS_MODULE
           valueFrom:
             configMapKeyRef:
               key: django-settings-module
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SECRET_KEY
           valueFrom:
             secretKeyRef:
               key: django-secret-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_ALLOWED_HOSTS
           valueFrom:
             configMapKeyRef:
               key: django-allowed-hosts
-              name: {{$prefix}}{{.name}}
-{{if or (eq .env "local") (eq .env "review")}}
+              name: {{$name}}
+{{if $local_or_review}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
 {{else}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             configMapKeyRef:
               key: database-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_PORT
           valueFrom:
             configMapKeyRef:
               key: database-port
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
 {{end}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
               key: django-debug
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_CLUSTER_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-cluster-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_IMAGE_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_IMAGE_TAG
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-tag
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-family-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-availability-zone
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-name
-              name: {{$prefix}}{{.name}}
-{{if or (env "API_SENTRY_ENABLED") (.api.sentry.enabled)}}
+              name: {{$name}}
+{{if $api_sentry_enabled}}
         - name: API_ENABLE_SENTRY
           valueFrom:
             configMapKeyRef:
               key: api-sentry-enabled
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SENTRY_DSN
           valueFrom:
             secretKeyRef:
               key: api-sentry-dsn
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SENTRY_RELEASE
           valueFrom:
             configMapKeyRef:
               key: api-sentry-release
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SENTRY_ENVIRONMENT
           valueFrom:
             configMapKeyRef:
               key: api-sentry-environment
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
 {{end}}
-{{if or (env "HOUNDIGRADE_SENTRY_ENABLED") (.aws.houndigrade.sentry.enabled)}}
+{{if $houndigrade_sentry_enabled}}
         - name: HOUNDIGRADE_ENABLE_SENTRY
           valueFrom:
             configMapKeyRef:
               key: houndigrade-sentry-enabled
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_SENTRY_DSN
           valueFrom:
             secretKeyRef:
               key: houndigrade-sentry-dsn
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_SENTRY_RELEASE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-tag
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_SENTRY_ENVIRONMENT
           valueFrom:
             configMapKeyRef:
               key: houndigrade-sentry-environment
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
 {{end}}
-{{if and (ne .env "local") (ne .env "review")}}
-        image: {{env "API_IMAGE"}}
+{{if $not_local_or_review}}
+        image: {{$api_image}}
 {{else}}
         image: ' '
         imagePullPolicy: Always
 {{end}}
-{{if ne .env "local"}}
+{{if $not_local}}
         resources:
           requests:
-            cpu: {{.api.limits.container.cpuRequest}}
-            memory: {{.api.limits.container.memRequest}}
+            cpu: {{$api_limits_container_cpu_request}}
+            memory: {{$api_limits_container_mem_request}}
           limits:
-            cpu: {{.api.limits.container.cpuLimit}}
-            memory: {{.api.limits.container.memLimit}}
+            cpu: {{$api_limits_container_cpu_limit}}
+            memory: {{$api_limits_container_mem_limit}}
 {{end}}
         livenessProbe:
           exec:
@@ -268,29 +329,29 @@ spec:
           timeoutSeconds: 1
         volumeMounts:
         - mountPath: /var/run/cloudigrade
-          name: {{$prefix}}{{.name}}-socket
-      - name: {{$prefix}}nginx
-{{if and (ne .env "local") (ne .env "review")}}
-        image: {{env "NGINX_IMAGE"}}
+          name: {{$name}}-socket
+      - name: {{$name}}-n
+{{if $not_local_or_review}}
+        image: {{$nginx_image}}
 {{else}}
         image: ' '
         imagePullPolicy: Always
 {{end}}
         ports:
-        - containerPort: {{.nginx.port}}
+        - containerPort: {{$nginx_port}}
           protocol: TCP
-{{if ne .env "local"}}
+{{if $not_local}}
         resources:
           requests:
-            cpu: {{.nginx.limits.container.cpuRequest}}
-            memory: {{.nginx.limits.container.memRequest}}
+            cpu: {{$nginx_limits_container_cpu_request}}
+            memory: {{$nginx_limits_container_mem_request}}
           limits:
-            cpu: {{.nginx.limits.container.cpuLimit}}
-            memory: {{.nginx.limits.container.memLimit}}
+            cpu: {{$nginx_limits_container_cpu_limit}}
+            memory: {{$nginx_limits_container_mem_limit}}
 {{end}}
         livenessProbe:
           tcpSocket:
-            port: {{.nginx.port}}
+            port: {{$nginx_port}}
           failureThreshold: 3
           initialDelaySeconds: 3
           periodSeconds: 10
@@ -300,256 +361,256 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /healthz/
-            port: {{.nginx.port}}
+            port: {{$nginx_port}}
             scheme: HTTP
             httpHeaders:
               - name: Host
-                value: {{.healthCheckHostHeader}}
+                value: {{$health_check_host_header}}
           initialDelaySeconds: 5
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
         volumeMounts:
         - mountPath: /var/run/cloudigrade
-          name: {{$prefix}}{{.name}}-socket
+          name: {{$name}}-socket
       volumes:
-      - name: {{$prefix}}{{.name}}-socket
+      - name: {{$name}}-socket
         emptyDir: {}
-{{if or (eq .env "local") (eq .env "review")}}
+{{if $local_or_review}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
-        automatic: {{.api.enableImageChangeTrigger}}
+        automatic: {{$api_image_change_trigger}}
         containerNames:
-          - {{$prefix}}{{.name}}-api
+          - {{$name}}-a
         from:
           kind: ImageStreamTag
-          name: {{$prefix}}{{.api.imageStreamName}}:{{.api.imageStreamTag}}
+          name: {{$api_imagestream_name}}:{{$api_imagestream_tag}}
     - type: ImageChange
       imageChangeParams:
-        automatic: {{.nginx.enableImageChangeTrigger}}
+        automatic: {{$nginx_image_change_trigger}}
         containerNames:
-          - {{$prefix}}nginx
+          - {{$name}}-n
         from:
           kind: ImageStreamTag
-          name: {{$prefix}}{{.nginx.imageStreamName}}:{{.nginx.imageStreamTag}}
+          name: {{$nginx_imagestream_name}}:{{$nginx_imagestream_tag}}
     - type: ConfigChange
 {{end}}
 ---
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-celery-beat
+  name: {{$name}}-b
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
   selector:
-    name: {{$prefix}}{{.name}}-celery-beat
-  replicas: {{.celery.beat.replicaCount}}
+    name: {{$name}}-b
+  replicas: {{$celery_beat_replica_count}}
   revisionHistoryLimit: 10
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: {{$prefix}}{{.name}}-celery-beat
+        name: {{$name}}-b
     spec:
       containers:
-      - name: {{$prefix}}{{.name}}-celery-beat
+      - name: {{$name}}-b
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-access-key-id
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-secret-access-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_DEFAULT_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-default-region
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-sqs-access-key-id
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-sqs-secret-access-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-region
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_MAX_RECEIVE_COUNT
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-max-receive-count
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
               key: aws-name-prefix
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SETTINGS_MODULE
           valueFrom:
             configMapKeyRef:
               key: django-settings-module
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SECRET_KEY
           valueFrom:
             secretKeyRef:
               key: django-secret-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_ALLOWED_HOSTS
           valueFrom:
             configMapKeyRef:
               key: django-allowed-hosts
-              name: {{$prefix}}{{.name}}
-{{if or (eq .env "local") (eq .env "review")}}
+              name: {{$name}}
+{{if $local_or_review}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
 {{else}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             configMapKeyRef:
               key: database-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_PORT
           valueFrom:
             configMapKeyRef:
               key: database-port
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
 {{end}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
               key: django-debug
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_CLUSTER_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-cluster-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_IMAGE_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_IMAGE_TAG
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-tag
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-family-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-availability-zone
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-persist-inspection-results-schedule
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-repopulate-ec2-instance-mapping-schedule
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-name
-              name: {{$prefix}}{{.name}}
-{{if or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled)}}
+              name: {{$name}}
+{{if $celery_sentry_enabled}}
         - name: CELERY_ENABLE_SENTRY
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-enabled
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CELERY_SENTRY_DSN
           valueFrom:
             secretKeyRef:
               key: celery-sentry-dsn
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CELERY_SENTRY_RELEASE
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-release
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CELERY_SENTRY_ENVIRONMENT
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-environment
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
 {{end}}
-{{if and (ne .env "local") (ne .env "review")}}
-        image: {{env "CELERY_IMAGE"}}
+{{if $not_local_or_review}}
+        image: {{$celery_image}}
 {{else}}
         image: ' '
         imagePullPolicy: Always
@@ -564,14 +625,14 @@ spec:
             --loglevel info
             --pidfile=
             --scheduler django_celery_beat.schedulers:DatabaseScheduler
-{{if ne .env "local"}}
+{{if $not_local}}
         resources:
           requests:
-            cpu: {{.celery.beat.limits.container.cpuRequest}}
-            memory: {{.celery.beat.limits.container.memRequest}}
+            cpu: {{$celery_beat_limits_container_cpu_request}}
+            memory: {{$celery_beat_limits_container_mem_request}}
           limits:
-            cpu: {{.celery.beat.limits.container.cpuLimit}}
-            memory: {{.celery.beat.limits.container.memLimit}}
+            cpu: {{$celery_beat_limits_container_cpu_limit}}
+            memory: {{$celery_beat_limits_container_mem_limit}}
 {{end}}
         livenessProbe:
           exec:
@@ -595,233 +656,233 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
-{{if or (eq .env "local") (eq .env "review")}}
+{{if $local_or_review}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
-        automatic: {{.celery.enableImageChangeTrigger}}
+        automatic: {{$celery_image_change_trigger}}
         containerNames:
-          - {{$prefix}}{{.name}}-celery-beat
+          - {{$name}}-b
         from:
           kind: ImageStreamTag
-          name: {{$prefix}}{{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
+          name: {{$celery_imagestream_name}}:{{$celery_imagestream_tag}}
     - type: ConfigChange
 {{end}}
 ---
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}-celery-worker
+  name: {{$name}}-w
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
   selector:
-    name: {{$prefix}}{{.name}}-celery-worker
-  replicas: {{.celery.worker.replicaCount}}
+    name: {{$name}}-w
+  replicas: {{$celery_worker_replica_count}}
   revisionHistoryLimit: 10
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: {{$prefix}}{{.name}}-celery-worker
+        name: {{$name}}-w
     spec:
       containers:
-      - name: {{$prefix}}{{.name}}-celery-worker
+      - name: {{$name}}-w
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-access-key-id
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-secret-access-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_DEFAULT_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-default-region
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               key: aws-sqs-access-key-id
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: aws-sqs-secret-access-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_REGION
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-region
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_SQS_MAX_RECEIVE_COUNT
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-max-receive-count
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
               key: aws-name-prefix
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SETTINGS_MODULE
           valueFrom:
             configMapKeyRef:
               key: django-settings-module
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_SECRET_KEY
           valueFrom:
             secretKeyRef:
               key: django-secret-key
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_ALLOWED_HOSTS
           valueFrom:
             configMapKeyRef:
               key: django-allowed-hosts
-              name: {{$prefix}}{{.name}}
-{{if or (eq .env "local") (eq .env "review")}}
+              name: {{$name}}
+{{if $local_or_review}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{env "DB_SECRETS_FILE_NAME" | default .db.secretsFileName}}
+              name: {{$db_secrets_file_name}}
 {{else}}
         - name: DJANGO_DATABASE_NAME
           valueFrom:
             configMapKeyRef:
               key: database-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_PORT
           valueFrom:
             configMapKeyRef:
               key: database-port
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_HOST
           valueFrom:
             configMapKeyRef:
               key: django-database-host
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_USER
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: DJANGO_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
 {{end}}
         - name: DJANGO_DEBUG
           valueFrom:
             configMapKeyRef:
               key: django-debug
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_CLUSTER_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-cluster-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_IMAGE_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_IMAGE_TAG
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-image-tag
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_FAMILY_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-ecs-family-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-availability-zone
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-persist-inspection-results-schedule
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-repopulate-ec2-instance-mapping-schedule
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-name
-              name: {{$prefix}}{{.name}}
-{{if or (env "CELERY_SENTRY_ENABLED") (.celery.sentry.enabled)}}
+              name: {{$name}}
+{{if $celery_sentry_enabled}}
         - name: CELERY_ENABLE_SENTRY
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-enabled
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CELERY_SENTRY_DSN
           valueFrom:
             secretKeyRef:
               key: celery-sentry-dsn
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CELERY_SENTRY_RELEASE
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-release
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
         - name: CELERY_SENTRY_ENVIRONMENT
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-environment
-              name: {{$prefix}}{{.name}}
+              name: {{$name}}
 {{end}}
-{{if and (ne .env "local") (ne .env "review")}}
-        image: {{env "CELERY_IMAGE"}}
+{{if $not_local_or_review}}
+        image: {{$celery_image}}
 {{else}}
         image: ' '
         imagePullPolicy: Always
@@ -836,14 +897,14 @@ spec:
             --loglevel info
             --concurrency 1
             --queues initial_aws_describe_instances,copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster,analyze_log,repopulate_ec2_instance_mapping
-{{if ne .env "local"}}
+{{if $not_local}}
         resources:
           requests:
-            cpu: {{.celery.worker.limits.container.cpuRequest}}
-            memory: {{.celery.worker.limits.container.memRequest}}
+            cpu: {{$celery_worker_limits_container_cpu_request}}
+            memory: {{$celery_worker_limits_container_mem_request}}
           limits:
-            cpu: {{.celery.worker.limits.container.cpuLimit}}
-            memory: {{.celery.worker.limits.container.memLimit}}
+            cpu: {{$celery_worker_limits_container_cpu_limit}}
+            memory: {{$celery_worker_limits_container_mem_limit}}
 {{end}}
         livenessProbe:
           exec:
@@ -867,15 +928,15 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
-{{if or (eq .env "local") (eq .env "review")}}
+{{if $local_or_review}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
-        automatic: {{.celery.enableImageChangeTrigger}}
+        automatic: {{$celery_image_change_trigger}}
         containerNames:
-          - {{$prefix}}{{.name}}-celery-worker
+          - {{$name}}-w
         from:
           kind: ImageStreamTag
-          name: {{$prefix}}{{.celery.imageStreamName}}:{{.celery.imageStreamTag}}
+          name: {{$celery_imagestream_name}}:{{$celery_imagestream_tag}}
     - type: ConfigChange
 {{end}}

@@ -1,16 +1,23 @@
 {{if or (eq .env "local") (eq .env "review")}}
-{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$frontigrade_imagestream_name := printf "%s%s" .frontigrade.imageStreamName $prefix}}
 ---
 kind: ImageStream
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.frontigrade.imageStreamName}}
+  name: {{$frontigrade_imagestream_name}}
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 {{end}}

@@ -1,58 +1,81 @@
-{{$prefix := or (env "DEPLOYMENT_PREFIX") ""}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$frontigrade_imagestream_name := printf "%s%s" .frontigrade.imageStreamName $prefix}}
+{{$frontigrade_imagestream_tag := .frontigrade.imageStreamTag}}
+
+{{$frontigrade_image := env "FRONTIGRADE_IMAGE"}}
+{{$frontigrade_replica_count := .frontigrade.replicaCount}}
+{{$frontigrade_port := .frontigrade.port}}
+
+{{$not_local := ne .env "local"}}
+{{$local_or_review := or (eq .env "local") (eq .env "review")}}
+{{$not_local_or_review := and (ne .env "local") (ne .env "review")}}
+
+{{$frontigrade_limits_container_cpu_request := .frontigrade.limits.container.cpuRequest}}
+{{$frontigrade_limits_container_mem_request := .frontigrade.limits.container.memRequest}}
+{{$frontigrade_limits_container_cpu_limit := .frontigrade.limits.container.cpuLimit}}
+{{$frontigrade_limits_container_mem_limit := .frontigrade.limits.container.memLimit}}
+
+{{$frontigrade_enable_image_change_trigger := .frontigrade.enableImageChangeTrigger}}
 ---
 kind: DeploymentConfig
 apiVersion: v1
 metadata:
-  name: {{$prefix}}{{.name}}
+  name: {{$name}}
   labels:
-{{if (env "CI_COMMIT_REF_SLUG")}}
-    app: {{env "CI_COMMIT_REF_SLUG"}}
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
 {{end}}
-    deployment: {{$prefix}}{{.name}}-deployment
-{{if (env "GITLAB_DEPLOYMENT")}}
-    gitlab-deployment: {{env "GITLAB_DEPLOYMENT"}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
 {{end}}
 spec:
   selector:
-    name: {{$prefix}}{{.name}}
-  replicas: {{.frontigrade.replicaCount}}
+    name: {{$name}}
+  replicas: {{$frontigrade_replica_count}}
   revisionHistoryLimit: 10
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: {{$prefix}}{{.name}}
+        name: {{$name}}
     spec:
       containers:
-      - name: {{$prefix}}{{.name}}
-{{if and (ne .env "local") (ne .env "review")}}
-        image: {{env "FRONTIGRADE_IMAGE"}}
+      - name: {{$name}}
+{{if $not_local_or_review}}
+        image: {{$frontigrade_image}}
 {{else}}
         image: ' '
         imagePullPolicy: Always
 {{end}}
-{{if ne .env "local"}}
+{{if $not_local}}
         resources:
           requests:
-            cpu: {{.frontigrade.limits.container.cpuRequest}}
-            memory: {{.frontigrade.limits.container.memRequest}}
+            cpu: {{$frontigrade_limits_container_cpu_request}}
+            memory: {{$frontigrade_limits_container_mem_request}}
           limits:
-            cpu: {{.frontigrade.limits.container.cpuLimit}}
-            memory: {{.frontigrade.limits.container.memLimit}}
+            cpu: {{$frontigrade_limits_container_cpu_limit}}
+            memory: {{$frontigrade_limits_container_mem_limit}}
 {{end}}
         ports:
-        - containerPort: {{.frontigrade.port}}
+        - containerPort: {{$frontigrade_port}}
           protocol: TCP
-{{if or (eq .env "local") (eq .env "review")}}
+{{if $local_or_review}}
   triggers:
     - type: "ImageChange"
       imageChangeParams:
-        automatic: {{.frontigrade.enableImageChangeTrigger}}
+        automatic: {{$frontigrade_enable_image_change_trigger}}
         containerNames:
-          - {{$prefix}}{{.name}}
+          - {{$name}}
         from:
           kind: ImageStreamTag
-          name: {{$prefix}}{{.frontigrade.imageStreamName}}:{{.frontigrade.imageStreamTag}}
+          name: {{$frontigrade_imagestream_name}}:{{$frontigrade_imagestream_tag}}
     - type: ConfigChange
 {{end}}
