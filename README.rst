@@ -17,7 +17,7 @@ Our Environments
     "Production", "Strict", "RDS", "https://www.cloudigra.de/ or https://cloudigrade-prod.1b13.insights.openshiftapps.com/", "Deployed from tagged docker image in GitLab."
     "Stage", "Strict", "RDS", "https://stage.cloudigra.de/ or https://cloudigrade-stage.1b13.insights.openshiftapps.com/", "Deployed from tagged docker image in GitLab."
     "Test", "Strict", "RDS", "https://test.cloudigra.de/ or https://cloudigrade-test.1b13.insights.openshiftapps.com/", "Deployed from tagged docker image in GitLab."
-    "Review", "Relaxed", "Ephemeral Postgres", "https://cloudireview-${BRANCH_NAME}.1b13.insights.openshiftapps.com/", "Built from branch inside the OSD cluster."
+    "Review", "Relaxed", "Ephemeral Postgres", "https://review-${BRANCH_NAME}.1b13.insights.openshiftapps.com/", "Built from branch inside the OSD cluster."
     "Local", "Relaxed", "Persistent Postgres", "http://127.0.0.1.nip.io/", "Built and run in local OCP cluster."
 
 How do automated deployments work?
