@@ -19,8 +19,8 @@
 {{$nginx_repo_uri := ((env "NGINX_REPO_URI") | default .nginx.repoUri)}}
 {{$nginx_repo_ref := ((env "NGINX_REPO_REF") | default .nginx.repoUriBranch)}}
 
-{{$api_repo_uri := ((env "API`_REPO_URI") | default .api.repoUri)}}
-{{$api_repo_ref := ((env "API`_REPO_REF") | default .api.repoUriBranch)}}
+{{$api_repo_uri := ((env "API_REPO_URI") | default .api.repoUri)}}
+{{$api_repo_ref := ((env "API_REPO_REF") | default .api.repoUriBranch)}}
 
 {{$api_limits_build_cpu_request := .api.limits.build.cpuRequest}}
 {{$api_limits_build_mem_request := .api.limits.build.memRequest}}
