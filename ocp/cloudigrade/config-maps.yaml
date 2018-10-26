@@ -6,6 +6,8 @@
 {{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
 {{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
 
+{{$commit_ref := (and (env "CI") (printf "%s - %s" (env "CI_COMMIT_REF_NAME") (env "CI_COMMIT_SHA"))) | quote}}
+
 {{$not_local := ne .env "local"}}
 {{$not_local_or_review := and (ne .env "local") (ne .env "review")}}
 
@@ -111,4 +113,5 @@ data:
   houndigrade-sentry-enabled: {{$houndigrade_sentry_enabled_str}}
   houndigrade-sentry-environment: {{$houndigrade_sentry_environment}}
 {{end}}
+  cloudigrade-version: {{$commit_ref}}
 type: Opaque

@@ -289,6 +289,11 @@ spec:
             configMapKeyRef:
               key: houndigrade-sentry-environment
               name: {{$name}}
+        - name: CLOUDIGRADE_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: cloudigrade-version
+              name: {{$name}}
 {{end}}
 {{if $not_local_or_review}}
         image: {{$api_image}}
@@ -608,6 +613,11 @@ spec:
             configMapKeyRef:
               key: celery-sentry-environment
               name: {{$name}}
+        - name: CLOUDIGRADE_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: cloudigrade-version
+              name: {{$name}}
 {{end}}
 {{if $not_local_or_review}}
         image: {{$celery_image}}
@@ -879,6 +889,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-environment
+              name: {{$name}}
+        - name: CLOUDIGRADE_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: cloudigrade-version
               name: {{$name}}
 {{end}}
 {{if $not_local_or_review}}
