@@ -246,6 +246,11 @@ spec:
             configMapKeyRef:
               key: aws-s3-bucket-name
               name: {{$name}}
+        - name: CLOUDIGRADE_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: cloudigrade-version
+              name: {{$name}}
 {{if $api_sentry_enabled}}
         - name: API_ENABLE_SENTRY
           valueFrom:
@@ -288,11 +293,6 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: houndigrade-sentry-environment
-              name: {{$name}}
-        - name: CLOUDIGRADE_VERSION
-          valueFrom:
-            configMapKeyRef:
-              key: cloudigrade-version
               name: {{$name}}
 {{end}}
 {{if $not_local_or_review}}
@@ -592,6 +592,11 @@ spec:
             configMapKeyRef:
               key: aws-s3-bucket-name
               name: {{$name}}
+        - name: CLOUDIGRADE_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: cloudigrade-version
+              name: {{$name}}
 {{if $celery_sentry_enabled}}
         - name: CELERY_ENABLE_SENTRY
           valueFrom:
@@ -612,11 +617,6 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-environment
-              name: {{$name}}
-        - name: CLOUDIGRADE_VERSION
-          valueFrom:
-            configMapKeyRef:
-              key: cloudigrade-version
               name: {{$name}}
 {{end}}
 {{if $not_local_or_review}}
@@ -869,6 +869,11 @@ spec:
             configMapKeyRef:
               key: aws-s3-bucket-name
               name: {{$name}}
+        - name: CLOUDIGRADE_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: cloudigrade-version
+              name: {{$name}}
 {{if $celery_sentry_enabled}}
         - name: CELERY_ENABLE_SENTRY
           valueFrom:
@@ -889,11 +894,6 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: celery-sentry-environment
-              name: {{$name}}
-        - name: CLOUDIGRADE_VERSION
-          valueFrom:
-            configMapKeyRef:
-              key: cloudigrade-version
               name: {{$name}}
 {{end}}
 {{if $not_local_or_review}}
