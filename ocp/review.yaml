@@ -104,6 +104,11 @@ include:
         cloudtrailEventUrl:
         repopulateEc2InstanceMappingSchedule: 604800
         s3BucketName:
+        s3Lifecycle:
+          name: s3_lifecycle_policy
+          iaTransition: 30
+          glacierTransition: 60
+          maxAge: 1460
       django:
         debug: false
         allowedHosts: '*'

@@ -97,6 +97,11 @@ include:
             enabled: true
         cloudtrailEventUrl:
         s3BucketName: test-cloudigrade
+        s3Lifecycle:
+          name: s3_lifecycle_policy
+          iaTransition: 30
+          glacierTransition: 60
+          maxAge: 1460
         repopulateEc2InstanceMappingSchedule: 604800
       django:
         debug: false

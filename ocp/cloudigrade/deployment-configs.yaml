@@ -86,7 +86,7 @@ spec:
           - scl
           - enable
           - rh-python36
-          - ./manage.py configurequeues && ./manage.py migrate
+          - ./manage.py configurequeues && ./manage.py syncbucketlifecycle && ./manage.py migrate
           containerName: {{$name}}-a
         failurePolicy: Abort
     type: Recreate
@@ -132,6 +132,26 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-max-receive-count
+              name: {{$name}}
+        - name: S3_BUCKET_LC_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-lc-name
+              name: {{$name}}
+        - name: S3_BUCKET_LC_IA_TRANSITION
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-lc-ia-transition
+              name: {{$name}}
+        - name: S3_BUCKET_LC_GLACIER_TRANSITION
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-lc-ia-glacier-transition
+              name: {{$name}}
+        - name: S3_BUCKET_LC_MAX_AGE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-lc-max-age
               name: {{$name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
