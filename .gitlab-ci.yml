@@ -29,6 +29,7 @@ Test Templates:
   before_script:
     - oc version
     - oc login ${KUBE_URL} --token=${KUBE_TOKEN}
+    - oc project cloudigrade-ci
   script:
     - kontemplate template ocp/local.yaml | oc apply --dry-run -f -
     - kontemplate template ocp/review.yaml | oc apply --dry-run -f -
