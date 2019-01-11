@@ -74,7 +74,7 @@ We encourage macOS developers to use `homebrew <https://brew.sh/>`_ to install a
 
 After installing Docker, open it, navigate to Preferences -> General and uncheck ``Automatically check for updates`` if it is checked, then navigate to Preferences -> Daemon. There add ``172.30.0.0/16`` to the list of insecure registries, then click ``Apply and Restart``.
 
-We currently use Openshift 3.9.X in production, so we need a matching openshift client.
+We currently use Openshift 3.11.X in production, so we need a matching openshift client.
 
 .. code-block:: bash
 
@@ -90,9 +90,9 @@ We recommend developing on the latest version of Fedora. Follow the following co
     # DNF Install AWS-CLI, Docker, and gettext
     sudo dnf install docker -y
     # Install an appropriate version of the OpenShift Client
-    wget -O oc.tar.gz https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
+    wget -O oc.tar.gz https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz
     tar -zxvf oc.tar.gz
-    cp openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc ~/bin
+    cp openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit/oc ~/bin
     # Allow interaction with Docker without root
     sudo groupadd docker && sudo gpasswd -a ${USER} docker
     newgrp docker
@@ -116,6 +116,18 @@ We recommend developing on the latest version of Fedora. Follow the following co
     sudo firewall-cmd --reload
 
 Please also fetch the latest release of ``kontemplate`` from `here <https://github.com/tazjin/kontemplate/releases>`_ and place it somewhere where it's in your ``$PATH``.
+
+Setup Minishift
+~~~~~~~~~~~~~~~
+
+Download the latest minishift CDK from https://developers.redhat.com/products/cdk/download/ appropriate for your system. After downloading and installing minishift, run `minishift setup-cdk` to setup the CDK.
+
+Add your access.redhat.com username to your environment, for example:
+
+.. code-block:: bash
+    echo export MINISHIFT_USERNAME=YOUR_RH_USERNAME >> ~/.bash_profile
+
+Make sure it is your USERNAME, and not your email. If you provide your email instead of the username you will not be able to log into the Red Hat registry.
 
 
 Developer Environment

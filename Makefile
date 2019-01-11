@@ -3,10 +3,7 @@ PYTHON		= $(shell which python)
 TOPDIR		= $(shell pwd)
 PYDIR		= cloudigrade
 
-OC_SOURCE	= registry.access.redhat.com/openshift3/ose
-OC_VERSION	= v3.9.41
-OC_DATA_DIR	= ${HOME}/.oc/openshift.local.data
-OC_IS_OS	= rhel7
+OC_VERSION	= v3.11.43
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
@@ -51,12 +48,8 @@ oc-login-developer:
 	oc login -u developer -p developer --insecure-skip-tls-verify
 
 oc-up:
-	oc cluster up \
-		--image=$(OC_SOURCE) \
-		--version=$(OC_VERSION) \
-		--image-streams=$(OC_IS_OS) \
-		--host-data-dir=$(OC_DATA_DIR) \
-		--use-existing-config
+	minishift start \
+		--openshift-version=$(OC_VERSION)
 ifeq ($(OS),Linux)
 	make oc-login-developer
 endif
@@ -72,12 +65,18 @@ oc-deploy-db:
 	oc rollout status dc/postgresql
 
 oc-create-cloudigrade-api:
+	API_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
+	AUTH_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
 	kontemplate template ocp/local.yaml	-i cloudigrade | oc apply -f -
 
 oc-create-cloudigrade-ui:
+	FRONTIGRADE_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
 	kontemplate template ocp/local.yaml	-i frontigrade | oc apply -f -
 
 oc-create-cloudigrade-all:
+	API_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
+	AUTH_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
+	FRONTIGRADE_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
 	kontemplate template ocp/local.yaml	| oc apply -f -
 
 oc-forward-ports:
@@ -87,15 +86,15 @@ oc-forward-ports:
 oc-stop-forwarding-ports:
 	kill -HUP $$(ps -eo pid,command | grep "oc port-forward" | grep -v grep | awk '{print $$1}')
 
-oc-up-dev: oc-up oc-check-cluster oc-deploy-db
+oc-up-dev: oc-up oc-deploy-db
 
-oc-up-all: oc-up oc-check-cluster oc-deploy-db oc-create-cloudigrade-all
+oc-up-all: oc-up oc-deploy-db oc-create-cloudigrade-all
 
 oc-down:
-	oc cluster down
+	minishift stop
 
 oc-clean: oc-down
-	$(PREFIX) rm -rf $(OC_DATA_DIR)
+	minishift delete -f
 
 oc-user:
 	oc rsh -c c-a $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=c-a  | awk '{print $$1}') scl enable rh-python36 -- python manage.py createsuperuser
@@ -103,6 +102,3 @@ oc-user:
 oc-user-authenticate:
 	@read -p "User name: " uname; \
 	oc rsh -c c-a $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=c-a | awk '{print $$1}') scl enable rh-python36 -- python manage.py drf_create_token $$uname
-
-oc-check-cluster:
-	while true; do oc cluster status > /dev/null; if [ $$? == "0" ]; then echo "Cluster is up!"; break; fi; echo "Waiting for cluster to start up..."; sleep 5; done;
