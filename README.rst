@@ -129,6 +129,8 @@ Add your access.redhat.com username to your environment, for example:
 
 Make sure it is your USERNAME, and not your email. If you provide your email instead of the username you will not be able to log into the Red Hat registry.
 
+If you do end up running into the `Login to registry.redhat.io in progress . FAIL` issue, do verify once again that you're using your username, and not your email. Failing that, making sure that your password does not have any characters that are just too funky may be worth trying.
+
 
 Developer Environment
 ---------------------
