@@ -139,8 +139,8 @@ include:
           build:
             cpuRequest: 500m
             cpuLimit: 1
-            memRequest: 512Mi
-            memLimit: 1Gi
+            memRequest: 1Gi
+            memLimit: 1.5Gi
         port: 8080
         fancyRouteHost:
         replicaCount: 1
