@@ -587,6 +587,16 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
               name: {{$name}}
+        - name: INSPECT_PENDING_IMAGES_MIN_AGE
+          valueFrom:
+            configMapKeyRef:
+              key: inspect-pending-images-min-age
+              name: {{$name}}
+        - name: INSPECT_PENDING_IMAGES_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: inspect-pending-images-schedule
+              name: {{$name}}
         - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
@@ -863,6 +873,16 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
+              name: {{$name}}
+        - name: INSPECT_PENDING_IMAGES_MIN_AGE
+          valueFrom:
+            configMapKeyRef:
+              key: inspect-pending-images-min-age
+              name: {{$name}}
+        - name: INSPECT_PENDING_IMAGES_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: inspect-pending-images-schedule
               name: {{$name}}
         - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
           valueFrom:

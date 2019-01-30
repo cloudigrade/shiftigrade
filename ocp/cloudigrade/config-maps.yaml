@@ -13,6 +13,9 @@
 
 {{$aws_default_region := .aws.defaultRegion}}
 
+{{$inspect_pending_images_min_age := (env "INSPECT_PENDING_IMAGES_MIN_AGE" | default .inspectPendingImagesMinAge | quote)}}
+{{$inspect_pending_images_schedule := (env "INSPECT_PENDING_IMAGES_SCHEDULE" | default .inspectPendingImagesSchedule | quote)}}
+
 {{$aws_houndigrade_ecs_cluster_name := (env "HOUNDIGRADE_ECS_CLUSTER_NAME" | default .aws.houndigrade.ecs.clusterName)}}
 {{$aws_houndigrade_ecs_image_name := (env "HOUNDIGRADE_ECS_IMAGE_NAME" | default .aws.houndigrade.ecs.imageName)}}
 {{$aws_houndigrade_ecs_image_tag := (env "HOUNDIGRADE_ECS_IMAGE_TAG" | default .aws.houndigrade.ecs.imageTag | quote)}}
@@ -123,4 +126,6 @@ data:
   houndigrade-sentry-environment: {{$houndigrade_sentry_environment}}
 {{end}}
   cloudigrade-version: {{$commit_ref}}
+  inspect-pending-images-min-age: {{$inspect_pending_images_min_age}}
+  inspect-pending-images-schedule: {{$inspect_pending_images_schedule}}
 type: Opaque

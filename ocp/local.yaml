@@ -131,6 +131,8 @@ include:
         databaseUser: postgres
         databasePassword: postgres
         databasePort: 5432
+      inspectPendingImagesMinAge: 43200
+      inspectPendingImagesSchedule: 900
   - name: frontigrade
     values:
       name: f

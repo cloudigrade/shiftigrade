@@ -115,6 +115,8 @@ include:
         databasePort: 5432
         databaseUser:
         databasePassword:
+      inspectPendingImagesMinAge: 43200
+      inspectPendingImagesSchedule: 900
   - name: frontigrade
     values:
       name: f
