@@ -70,6 +70,7 @@ We encourage macOS developers to use `homebrew <https://brew.sh/>`_ to install a
     brew tap tazjin/kontemplate https://github.com/tazjin/kontemplate
     brew install socat kontemplate
     # We need to install a specific version of docker since newer ones have a bug around the builtin proxy
+    rm -f $(brew --cache)/Cask/docker.rb
     brew cask install https://raw.githubusercontent.com/caskroom/homebrew-cask/61f1d33be340e27b91f2a5c88da0496fc24904d3/Casks/docker.rb
 
 After installing Docker, open it, navigate to Preferences -> General and uncheck ``Automatically check for updates`` if it is checked, then navigate to Preferences -> Daemon. There add ``172.30.0.0/16`` to the list of insecure registries, then click ``Apply and Restart``.
