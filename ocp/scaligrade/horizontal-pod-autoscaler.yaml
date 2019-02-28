@@ -1,0 +1,37 @@
+{{if and (ne .env "local") (ne .env "review")}}
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$scaligrade_replicaCount := .scaligrade.replicaCount}}
+{{$scaligrade_replicaCountMax := .scaligrade.replicaCountMax}}
+{{$scaligrade_targetAverageCPUUtilization := .scaligrade.targetAverageCPUUtilization}}
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{$name}}-cpu
+  labels:
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
+{{end}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
+{{end}}
+spec:
+  scaleTargetRef:
+    apiVersion: v1
+    kind: DeploymentConfig
+    name: {{$name}}
+  minReplicas: {{$scaligrade_replicaCount}}
+  maxReplicas: {{$scaligrade_replicaCountMax}}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: {{$scaligrade_targetAverageCPUUtilization}}
+{{end}}

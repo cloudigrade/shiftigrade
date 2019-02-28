@@ -46,6 +46,7 @@ Prefix:
 
 - ``c-`` denotes **c**\ loudigrade
 - ``f-`` denotes **f**\ rontigrade
+- ``s-`` denotes **s**\ caligrade
 
 Suffix:
 

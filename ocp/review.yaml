@@ -150,3 +150,27 @@ include:
         routePath: /
         sentry:
           enabled: false
+  - name: scaligrade
+    values:
+      name: s
+      scaligrade:
+        enableImageChangeTrigger: true
+        repoUri: https://gitlab.com/cloudigrade/scaligrade.git
+        repoUriBranch: master
+        imageStreamName: s
+        imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest: 100m
+            cpuLimit: 100m
+            memRequest: 64Mi
+            memLimit: 128Mi
+          build:
+            cpuRequest: 200m
+            cpuLimit: 500m
+            memRequest: 256Mi
+            memLimit: 512Mi
+        port: 8080
+        replicaCount: 1
+        sentry:
+          enabled: false

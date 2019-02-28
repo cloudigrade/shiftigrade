@@ -1,0 +1,81 @@
+{{/* Variables */}}
+{{$prefix := or (env "DEPLOYMENT_PREFIX" | trunc 36) ""}}
+{{$prefix := and $prefix (printf "-%s" $prefix)}}
+{{$name := printf "%s%s" .name $prefix}}
+{{$commit_ref_slug := env "CI_COMMIT_REF_SLUG"}}
+{{$gitlab_deployment := env "GITLAB_DEPLOYMENT"}}
+
+{{$scaligrade_imagestream_name := printf "%s%s" .scaligrade.imageStreamName $prefix}}
+{{$scaligrade_imagestream_tag := .scaligrade.imageStreamTag}}
+
+{{$scaligrade_image := env "SCALIGRADE_IMAGE"}}
+{{$scaligrade_replica_count := .scaligrade.replicaCount}}
+{{$scaligrade_port := .scaligrade.port}}
+
+{{$not_local := ne .env "local"}}
+{{$local_or_review := or (eq .env "local") (eq .env "review")}}
+{{$not_local_or_review := and (ne .env "local") (ne .env "review")}}
+
+{{$scaligrade_limits_container_cpu_request := .scaligrade.limits.container.cpuRequest}}
+{{$scaligrade_limits_container_mem_request := .scaligrade.limits.container.memRequest}}
+{{$scaligrade_limits_container_cpu_limit := .scaligrade.limits.container.cpuLimit}}
+{{$scaligrade_limits_container_mem_limit := .scaligrade.limits.container.memLimit}}
+
+{{$scaligrade_enable_image_change_trigger := .scaligrade.enableImageChangeTrigger}}
+---
+kind: DeploymentConfig
+apiVersion: v1
+metadata:
+  name: {{$name}}
+  labels:
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
+{{end}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
+{{end}}
+spec:
+  selector:
+    name: {{$name}}
+  replicas: {{$scaligrade_replica_count}}
+  revisionHistoryLimit: 10
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: {{$name}}
+    spec:
+      containers:
+      - name: {{$name}}
+{{if $not_local_or_review}}
+        image: {{$scaligrade_image}}
+{{else}}
+        image: ' '
+        imagePullPolicy: Always
+{{end}}
+{{if $not_local}}
+        resources:
+          requests:
+            cpu: {{$scaligrade_limits_container_cpu_request}}
+            memory: {{$scaligrade_limits_container_mem_request}}
+          limits:
+            cpu: {{$scaligrade_limits_container_cpu_limit}}
+            memory: {{$scaligrade_limits_container_mem_limit}}
+{{end}}
+        ports:
+        - containerPort: {{$scaligrade_port}}
+          protocol: TCP
+{{if $local_or_review}}
+  triggers:
+    - type: "ImageChange"
+      imageChangeParams:
+        automatic: {{$scaligrade_enable_image_change_trigger}}
+        containerNames:
+          - {{$name}}
+        from:
+          kind: ImageStreamTag
+          name: {{$scaligrade_imagestream_name}}:{{$scaligrade_imagestream_tag}}
+    - type: ConfigChange
+{{end}}
