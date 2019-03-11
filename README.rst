@@ -127,7 +127,14 @@ Download the latest minishift CDK from https://developers.redhat.com/products/cd
 Add your access.redhat.com username to your environment, for example:
 
 .. code-block:: bash
+
     echo export MINISHIFT_USERNAME=YOUR_RH_USERNAME >> ~/.bash_profile
+
+Disable the openshift version check:
+
+.. code-block:: bash
+
+    minishift config set skip-check-openshift-release true
 
 Make sure it is your USERNAME, and not your email. If you provide your email instead of the username you will not be able to log into the Red Hat registry.
 
