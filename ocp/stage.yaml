@@ -85,12 +85,12 @@ include:
         secretAccessKey:
         houndigrade:
           ecs:
-            clusterName: cloudigrade-stage-us-east-1a
+            clusterName: cloudigrade-pilot-stage-us-east-1a
             imageName: registry.gitlab.com/cloudigrade/houndigrade
             imageTag: 0.1.4
             familyName: Houndigrade
           availabilityZone: us-east-1a
-          autoscalingGroupName: EC2ContainerService-cloudigrade-stage-us-east-1a-EcsInstanceAsg-1WBHJE3U5SY18
+          autoscalingGroupName: EC2ContainerService-cloudigrade-pilot-stage-us-east-1a-EcsInstanceAsg-11XNWGB8NQPX2
           scaleUpClusterSchedule: 3600
           persistInspectionResultsSchedule: 300
           sentry:
