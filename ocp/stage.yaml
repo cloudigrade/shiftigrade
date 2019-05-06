@@ -78,7 +78,7 @@ include:
           defaultRegion: us-east-1
           accessKeyId:
           secretAccessKey:
-          namePrefix: pilot-stage-
+          namePrefix: stage-
           maxReceiveCount: 5
         defaultRegion: us-east-1
         accessKeyId:
