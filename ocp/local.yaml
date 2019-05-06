@@ -12,7 +12,6 @@ include:
       healthCheckHostHeader: health.cloudigrade.insights.openshiftapps.com
       api:
         enableImageChangeTrigger: true
-        fancyRouteHost:
         repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
         repoUriBranch: master
         imageStreamName: c
@@ -29,14 +28,8 @@ include:
             memRequest:
             memLimit:
         replicaCount: 1
-        routeHost: cloudigrade.127.0.0.1.nip.io
-        routePath: /api/v1/
         sentry:
           enabled: false
-      auth:
-        fancyRouteHost:
-        routeHost: cloudigrade.127.0.0.1.nip.io
-        routePath: /auth/
       nginx:
         enableImageChangeTrigger: true
         repoUri: https://gitlab.com/cloudigrade/cloudigrade.git

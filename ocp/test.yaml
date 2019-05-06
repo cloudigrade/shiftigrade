@@ -20,18 +20,11 @@ include:
             cpuLimit: 200m
             memRequest: 256Mi
             memLimit: 512Mi
-        fancyRouteHost: test.cloudigra.de
         replicaCount: 2
         replicaCountMax: 8
-        routeHost:
-        routePath: /api/v1/
         sentry:
           enabled: true
         targetAverageCPUUtilization: 80
-      auth:
-        fancyRouteHost: test.cloudigra.de
-        routeHost:
-        routePath: /auth/
       nginx:
         enableImageChangeTrigger: true
         imageStreamName: c-nginx

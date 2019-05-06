@@ -27,16 +27,9 @@ include:
             cpuLimit: 1
             memRequest: 512Mi
             memLimit: 768Mi
-        fancyRouteHost:
         replicaCount: 1
-        routeHost:
-        routePath: /api/v1/
         sentry:
           enabled: false
-      auth:
-        fancyRouteHost:
-        routeHost:
-        routePath: /auth/
       nginx:
         enableImageChangeTrigger: true
         repoUri: https://gitlab.com/cloudigrade/cloudigrade.git
