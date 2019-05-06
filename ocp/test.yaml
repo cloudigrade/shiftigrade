@@ -89,7 +89,7 @@ include:
           sentry:
             enabled: true
         cloudtrailEventUrl:
-        s3BucketName: test-cloudigrade
+        s3BucketName:
         s3Lifecycle:
           name: s3_lifecycle_policy
           iaTransition: 30

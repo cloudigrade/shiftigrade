@@ -90,7 +90,7 @@ include:
             enabled: true
         cloudtrailEventUrl:
         repopulateEc2InstanceMappingSchedule: 604800
-        s3BucketName: prod-cloudigrade
+        s3BucketName:
         s3Lifecycle:
           name: s3_lifecycle_policy
           iaTransition: 30
