@@ -44,7 +44,7 @@ To accommodate as verbose of branch names as possible for our automated review e
 
 Prefix:
 
-- ``c1-`` denotes **c**\ loudigrade (v1)
+- ``c-`` denotes **c**\ loudigrade
 - ``f-`` denotes **f**\ rontigrade
 - ``s-`` denotes **s**\ caligrade
 
