@@ -27,9 +27,7 @@ help:
 	@echo "  oc-clean                      to stop the local OpenShift cluster and delete configuration."
 	@echo "==[OpenShift/Deployment Shortcuts]==================================="
 	@echo "  oc-deploy-db                  to create and deploy the DB."
-	@echo "  oc-create-cloudigrade-all     to create and deploy the cloudigrade and frontigrade."
 	@echo "  oc-create-cloudigrade-api     to create and deploy the cloudigrade. "
-	@echo "  oc-create-cloudigrade-ui      to create and deploy the frontigrade."
 	@echo "==[OpenShift/Dev Shortcuts]=========================================="
 	@echo "  oc-login-admin                to log into the local cluster as an admin."
 	@echo "  oc-login-developer            to log into the local cluster as a developer."
@@ -69,16 +67,6 @@ oc-create-cloudigrade-api:
 	AUTH_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
 	kontemplate template ocp/local.yaml	-i cloudigrade | oc apply -f -
 
-oc-create-cloudigrade-ui:
-	FRONTIGRADE_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
-	kontemplate template ocp/local.yaml	-i frontigrade | oc apply -f -
-
-oc-create-cloudigrade-all:
-	API_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
-	AUTH_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
-	FRONTIGRADE_ROUTE_HOST=cloudigrade.$$(minishift ip).nip.io \
-	kontemplate template ocp/local.yaml	| oc apply -f -
-
 oc-forward-ports:
 	-make oc-stop-forwarding-ports 2>/dev/null
 	oc port-forward $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=postgresql) 5432 &
@@ -88,7 +76,7 @@ oc-stop-forwarding-ports:
 
 oc-up-dev: oc-up oc-deploy-db
 
-oc-up-all: oc-up oc-deploy-db oc-create-cloudigrade-all
+oc-up-all: oc-up oc-deploy-db oc-create-cloudigrade-api
 
 oc-down:
 	minishift stop

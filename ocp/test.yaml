@@ -110,28 +110,6 @@ include:
         databasePassword:
       inspectPendingImagesMinAge: 43200
       inspectPendingImagesSchedule: 900
-  - name: frontigrade
-    values:
-      name: f
-      frontigrade:
-        enableImageChangeTrigger: true
-        imageStreamName: f
-        imageStreamTag: latest
-        limits:
-          container:
-            cpuRequest: 100m
-            cpuLimit: 100m
-            memRequest: 64Mi
-            memLimit: 128Mi
-        port: 8080
-        fancyRouteHost: test.cloudigra.de
-        replicaCount: 2
-        replicaCountMax: 6
-        targetAverageCPUUtilization: 80
-        routeHost:
-        routePath: /
-        sentry:
-          enabled: false
   - name: scaligrade
     values:
       name: s

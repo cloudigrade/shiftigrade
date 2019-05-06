@@ -126,33 +126,6 @@ include:
         databasePort: 5432
       inspectPendingImagesMinAge: 43200
       inspectPendingImagesSchedule: 900
-  - name: frontigrade
-    values:
-      name: f
-      frontigrade:
-        enableImageChangeTrigger: true
-        repoUri: https://gitlab.com/cloudigrade/frontigrade.git
-        repoUriBranch: master
-        imageStreamName: f
-        imageStreamTag: latest
-        limits:
-          container:
-            cpuRequest:
-            cpuLimit:
-            memRequest:
-            memLimit:
-          build:
-            cpuRequest:
-            cpuLimit:
-            memRequest:
-            memLimit:
-        port: 8080
-        fancyRouteHost:
-        replicaCount: 1
-        routeHost: cloudigrade.127.0.0.1.nip.io
-        routePath: /
-        sentry:
-          enabled: false
   - name: scaligrade
     values:
       name: s
