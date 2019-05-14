@@ -83,10 +83,9 @@ spec:
       mid:
         execNewPod:
           command:
-          - scl
-          - enable
-          - rh-python36
-          - ./manage.py configurequeues && ./manage.py syncbucketlifecycle && ./manage.py migrate
+          - /bin/sh
+          - -c
+          - 'python3 ./manage.py configurequeues && python3 ./manage.py syncbucketlifecycle && python3 ./manage.py migrate'
           containerName: {{$name}}-a
         failurePolicy: Abort
     type: Recreate
@@ -659,7 +658,6 @@ spec:
           - /bin/sh
           - -c
           - >
-            PYTHONPATH=. scl enable rh-python36 --
             celery beat
             --app config
             --loglevel info
@@ -690,7 +688,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              - '[[ $(ps axo command | grep "[p]ython" | grep celery | grep -c beat) -gt 1 ]]'
+              - '[[ $(ps axo command | grep "[p]ython" | grep celery | grep -c beat) -eq 1 ]]'
           failureThreshold: 3
           initialDelaySeconds: 5
           periodSeconds: 10
@@ -946,7 +944,6 @@ spec:
           - /bin/sh
           - -c
           - >
-            PYTHONPATH=. scl enable rh-python36 --
             celery worker
             --app config
             --loglevel info
@@ -977,7 +974,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              - '[[ $(ps axo command | grep "[p]ython" | grep celery | grep -c worker) -gt 1 ]]'
+              - '[[ $(ps axo command | grep "[p]ython" | grep celery | grep -c worker) -eq 2 ]]'
           failureThreshold: 3
           initialDelaySeconds: 5
           periodSeconds: 10
