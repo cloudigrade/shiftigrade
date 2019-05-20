@@ -80,7 +80,7 @@ include:
           ecs:
             clusterName: cloudigrade-stage-us-east-1a
             imageName: registry.gitlab.com/cloudigrade/houndigrade
-            imageTag: 0.1.4
+            imageTag: 0.2.0
             familyName: Houndigrade
           availabilityZone: us-east-1a
           autoscalingGroupName: EC2ContainerService-cloudigrade-stage-us-east-1a-EcsInstanceAsg-1WBHJE3U5SY18
