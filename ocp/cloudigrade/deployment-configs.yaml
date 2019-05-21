@@ -948,7 +948,7 @@ spec:
             --app config
             --loglevel info
             --concurrency 1
-            --queues celery,initial_aws_describe_instances,copy_ami_snapshot,copy_ami_to_customer_account,remove_snapshot_ownership,create_volume,delete_snapshot,enqueue_ready_volumes,scale_up_inspection_cluster,run_inspection_cluster,persist_inspection_cluster_results_task,scale_down_cluster,analyze_log,repopulate_ec2_instance_mapping,inspect_pending_images,process_instance_event
+            --queues celery
 {{if $not_local}}
         resources:
           requests:
