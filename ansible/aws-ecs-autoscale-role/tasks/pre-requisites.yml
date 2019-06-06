@@ -39,6 +39,7 @@
           Service: "ec2.amazonaws.com"
     managed_policy:
       - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+      - "arn:aws:iam::743187646576:policy/ECS-CloudWatchLogs"
   when: ecs_instance_profile_name == "ecsInstanceRole"
   register: role_creation_result
 
