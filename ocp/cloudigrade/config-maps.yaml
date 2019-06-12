@@ -30,6 +30,8 @@
 {{$aws_sqs_default_region := .aws.sqs.defaultRegion}}
 {{$aws_cloudtrail_event_url := (env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl)}}
 {{$aws_sqs_max_receive_count := (env "AWS_SQS_MAX_RECEIVE_COUNT" | default .aws.sqs.maxReceiveCount | quote)}}
+{{$aws_sqs_max_yield_count := (env "AWS_SQS_MAX_YIELD_COUNT" | default .aws.sqs.maxYieldCount | quote)}}
+{{$aws_sqs_max_houndi_yield_count := (env "AWS_SQS_MAX_HOUNDI_YIELD_COUNT" | default .aws.sqs.maxHoundiYieldCount | quote)}}
 
 {{$aws_sqs_name_prefix := .aws.sqs.namePrefix | quote}}
 {{$aws_not_local_name_prefix := (or (env "DEPLOYMENT_PREFIX") ($aws_sqs_name_prefix))}}
@@ -92,6 +94,8 @@ data:
   aws-sqs-region: {{$aws_sqs_default_region}}
   aws-cloudtrail-event-url: {{$aws_cloudtrail_event_url}}
   aws-sqs-max-receive-count: {{$aws_sqs_max_receive_count}}
+  aws-sqs-max-yield-count: {{$aws_sqs_max_yield_count}}
+  aws-sqs-max-houndi-yield-count: {{$aws_sqs_max_houndi_yield_count}}
 {{if $not_local}}
   aws-name-prefix: {{$aws_not_local_name_prefix}}
   aws-s3-bucket-name: {{$aws_not_local_bucket_name}}

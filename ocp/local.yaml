@@ -89,6 +89,8 @@ include:
           secretAccessKey: 456
           maxReceiveCount: 5
           namePrefix:
+          maxYieldCount: 100
+          maxHoundiYieldCount: 10
         defaultRegion: us-east-1
         accessKeyId: 123
         secretAccessKey: 456
