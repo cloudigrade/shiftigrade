@@ -80,6 +80,8 @@ include:
           secretAccessKey:
           namePrefix: pilot-stage-
           maxReceiveCount: 5
+          maxYieldCount: 100
+          maxHoundiYieldCount: 10
         defaultRegion: us-east-1
         accessKeyId:
         secretAccessKey:

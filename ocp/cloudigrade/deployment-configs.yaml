@@ -133,6 +133,16 @@ spec:
             configMapKeyRef:
               key: aws-sqs-max-receive-count
               name: {{$name}}
+        - name: AWS_SQS_MAX_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-yield-count
+              name: {{$name}}
+        - name: AWS_SQS_MAX_HOUNDI_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-houndi-yield-count
+              name: {{$name}}
         - name: S3_BUCKET_LC_NAME
           valueFrom:
             configMapKeyRef:
@@ -484,6 +494,16 @@ spec:
             configMapKeyRef:
               key: aws-sqs-max-receive-count
               name: {{$name}}
+        - name: AWS_SQS_MAX_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-yield-count
+              name: {{$name}}
+        - name: AWS_SQS_MAX_HOUNDI_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-houndi-yield-count
+              name: {{$name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
             configMapKeyRef:
@@ -770,6 +790,16 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-sqs-max-receive-count
+              name: {{$name}}
+        - name: AWS_SQS_MAX_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-yield-count
+              name: {{$name}}
+        - name: AWS_SQS_MAX_HOUNDI_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-houndi-yield-count
               name: {{$name}}
         - name: AWS_NAME_PREFIX
           valueFrom:
