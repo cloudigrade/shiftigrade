@@ -126,6 +126,24 @@ include:
         databaseUser: postgres
         databasePassword: postgres
         databasePort: 5432
+      listener:
+        enableImageChangeTrigger: true
+        imageStreamName: c
+        imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest:
+            cpuLimit:
+            memRequest:
+            memLimit:
+        replicaCount: 1
+        logLevel: INFO
+        topic: platform.sources.event-stream
+        groupId: cloudmeter_dev
+        server: localhost
+        port: 9092
+        auto_commit: True
+        timeout_ms: 1000
       inspectPendingImagesMinAge: 43200
       inspectPendingImagesSchedule: 900
   - name: scaligrade

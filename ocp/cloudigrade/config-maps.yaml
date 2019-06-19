@@ -67,6 +67,14 @@
 {{$houndigrade_sentry_enabled_str := $houndigrade_sentry_enabled | quote}}
 {{$houndigrade_sentry_environment := env "HOUNDIGRADE_SENTRY_ENVIRONMENT"}}
 
+{{$listener_log_level := (env "LISTENER_LOG_LEVEL" | default .listener.logLevel)}}
+{{$listener_topic := (env "LISTENER_TOPIC" | default .listener.topic)}}
+{{$listener_group_id := (env "LISTENER_GROUP_ID" | default .listener.groupId)}}
+{{$listener_server := (env "LISTENER_SERVER" | default .listener.server)}}
+{{$listener_port := (env "LISTENER_PORT" | default .listener.port | quote)}}
+{{$listener_auto_commit := (env "LISTENER_AUTO_COMMIT" | default .listener.auto_commit | quote)}}
+{{$listener_timeout_ms := (env "LISTENER_TIMEOUT" | default .listener.timeout_ms | quote)}}
+
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -132,4 +140,11 @@ data:
   cloudigrade-version: {{$commit_ref}}
   inspect-pending-images-min-age: {{$inspect_pending_images_min_age}}
   inspect-pending-images-schedule: {{$inspect_pending_images_schedule}}
+  listener-log-level: {{$listener_log_level}}
+  listener-topic: {{$listener_topic}}
+  listener-group-id: {{$listener_group_id}}
+  listener-server: {{$listener_server}}
+  listener-port: {{$listener_port}}
+  listener-auto-commit: {{$listener_auto_commit}}
+  listener-timeout-ms: {{$listener_timeout_ms}}
 type: Opaque

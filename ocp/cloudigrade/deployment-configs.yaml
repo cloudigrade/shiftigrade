@@ -16,22 +16,27 @@
 {{$api_imagestream_name := printf "%s%s" .api.imageStreamName $prefix}}
 {{$nginx_imagestream_name := printf "%s%s" .nginx.imageStreamName $prefix}}
 {{$celery_imagestream_name := printf "%s%s" .celery.imageStreamName $prefix}}
+{{$listener_imagestream_name := printf "%s%s" .listener.imageStreamName $prefix}}
 
 {{$api_imagestream_tag := .api.imageStreamTag}}
 {{$nginx_imagestream_tag := .nginx.imageStreamTag}}
 {{$celery_imagestream_tag := .celery.imageStreamTag}}
+{{$listener_imagestream_tag := .listener.imageStreamTag}}
 
 {{$api_image := env "API_IMAGE"}}
 {{$nginx_image := env "NGINX_IMAGE"}}
 {{$celery_image := env "CELERY_IMAGE"}}
+{{$listener_image := env "LISTENER_IMAGE"}}
 
 {{$api_image_change_trigger := .api.enableImageChangeTrigger}}
 {{$nginx_image_change_trigger := .nginx.enableImageChangeTrigger}}
 {{$celery_image_change_trigger := .celery.enableImageChangeTrigger}}
+{{$listener_image_change_trigger := .listener.enableImageChangeTrigger}}
 
 {{$api_replica_count := .api.replicaCount}}
 {{$celery_beat_replica_count := .celery.beat.replicaCount}}
 {{$celery_worker_replica_count := .celery.worker.replicaCount}}
+{{$listener_worker_replica_count := .listener.replicaCount}}
 
 {{$api_target_port := printf "c%s-nginx" $prefix}}
 {{$nginx_port := .nginx.port}}
@@ -59,6 +64,11 @@
 {{$celery_worker_limits_container_mem_request := .celery.worker.limits.container.memRequest}}
 {{$celery_worker_limits_container_cpu_limit := .celery.worker.limits.container.cpuLimit}}
 {{$celery_worker_limits_container_mem_limit := .celery.worker.limits.container.memLimit}}
+
+{{$listener_limits_container_cpu_request := .listener.limits.container.cpuRequest}}
+{{$listener_limits_container_mem_request := .listener.limits.container.memRequest}}
+{{$listener_limits_container_cpu_limit := .listener.limits.container.cpuLimit}}
+{{$listener_limits_container_mem_limit := .listener.limits.container.memLimit}}
 
 ---
 kind: DeploymentConfig
@@ -1020,5 +1030,125 @@ spec:
         from:
           kind: ImageStreamTag
           name: {{$celery_imagestream_name}}:{{$celery_imagestream_tag}}
+    - type: ConfigChange
+{{end}}
+---
+kind: DeploymentConfig
+apiVersion: v1
+metadata:
+  name: {{$name}}-l
+  labels:
+{{if $commit_ref_slug}}
+    app: {{$commit_ref_slug}}
+{{end}}
+    deployment: {{$name}}-deployment
+{{if $gitlab_deployment}}
+    gitlab-deployment: {{$gitlab_deployment}}
+{{end}}
+spec:
+  selector:
+    name: {{$name}}-l
+  replicas: {{$listener_worker_replica_count}}
+  revisionHistoryLimit: 10
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: {{$name}}-l
+    spec:
+      containers:
+      - name: {{$name}}-l
+        env:
+        - name: LISTENER_LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              key: listener-log-level
+              name: {{$name}}
+        - name: LISTENER_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              key: listener-topic
+              name: {{$name}}
+        - name: LISTENER_GROUP_ID
+          valueFrom:
+            configMapKeyRef:
+              key: listener-group-id
+              name: {{$name}}
+        - name: LISTENER_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: listener-server
+              name: {{$name}}
+        - name: LISTENER_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: listener-port
+              name: {{$name}}
+        - name: LISTENER_AUTO_COMMIT
+          valueFrom:
+            configMapKeyRef:
+              key: listener-auto-commit
+              name: {{$name}}
+        - name: LISTENER_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              key: listener-timeout-ms
+              name: {{$name}}
+{{if $not_local_or_review}}
+        image: {{$listener_image}}
+{{else}}
+        image: ' '
+        imagePullPolicy: Always
+{{end}}
+        command: ['python']
+        args: ['sources_listener.py']
+{{if $not_local}}
+        resources:
+          requests:
+            cpu: {{$listener_limits_container_cpu_request}}
+            memory: {{$listener_limits_container_mem_request}}
+          limits:
+            cpu: {{$listener_limits_container_cpu_limit}}
+            memory: {{$listener_limits_container_mem_limit}}
+{{end}}
+        livenessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - 'ps axo pid | grep `cat /var/run/cloudigrade/cloudilistener.pid`'
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - 'ps axo pid | grep `cat /var/run/cloudigrade/cloudilistener.pid`'
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /var/run/cloudigrade
+          name: {{$name}}-socket
+      volumes:
+      - name: {{$name}}-socket
+        emptyDir: {}
+{{if $local_or_review}}
+  triggers:
+    - type: "ImageChange"
+      imageChangeParams:
+        automatic: {{$listener_image_change_trigger}}
+        containerNames:
+          - {{$name}}-l
+        from:
+          kind: ImageStreamTag
+          name: {{$listener_imagestream_name}}:{{$listener_imagestream_tag}}
     - type: ConfigChange
 {{end}}

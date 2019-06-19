@@ -110,6 +110,24 @@ include:
         databasePort: 5432
         databaseUser:
         databasePassword:
+      listener:
+        enableImageChangeTrigger: true
+        imageStreamName: c
+        imageStreamTag: latest
+        limits:
+          container:
+            cpuRequest: 100m
+            cpuLimit: 200m
+            memRequest: 128Mi
+            memLimit: 256Mi
+        replicaCount: 1
+        logLevel: INFO
+        topic: platform.sources.event-stream
+        groupId: cloudmeter_test
+        server: platform-mq-ci-kafka-bootstrap.platform-mq-qa.svc
+        port: 9092
+        auto_commit: True
+        timeout_ms: 1000
       inspectPendingImagesMinAge: 43200
       inspectPendingImagesSchedule: 900
   - name: scaligrade
