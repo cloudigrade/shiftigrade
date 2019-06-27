@@ -124,7 +124,7 @@ include:
         logLevel: INFO
         topic: platform.sources.event-stream
         groupId: cloudmeter_prod
-        server: platform-mq-ci-kafka-bootstrap.platform-mq-prod.svc
+        server: platform-mq-prod-kafka-bootstrap.platform-mq-prod.svc
         port: 9092
         auto_commit: True
         timeout_ms: 1000
