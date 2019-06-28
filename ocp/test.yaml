@@ -122,9 +122,9 @@ include:
             memLimit: 256Mi
         replicaCount: 1
         logLevel: INFO
-        topic: platform.sources.event-stream
+        topic: platform.cloudisources-test.event-stream
         groupId: cloudmeter_test
-        server: platform-mq-qa-kafka-bootstrap.platform-mq-qa.svc
+        server: platform-mq-prod-kafka-bootstrap.platform-mq-prod.svc
         port: 9092
         auto_commit: True
         timeout_ms: 1000
