@@ -1095,14 +1095,226 @@ spec:
             configMapKeyRef:
               key: listener-timeout-ms
               name: {{$name}}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: aws-access-key-id
+              name: {{$name}}
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws-secret-access-key
+              name: {{$name}}
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: aws-default-region
+              name: {{$name}}
+        - name: AWS_SQS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: aws-sqs-access-key-id
+              name: {{$name}}
+        - name: AWS_SQS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws-sqs-secret-access-key
+              name: {{$name}}
+        - name: AWS_SQS_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-region
+              name: {{$name}}
+        - name: AWS_SQS_MAX_RECEIVE_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-receive-count
+              name: {{$name}}
+        - name: AWS_SQS_MAX_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-yield-count
+              name: {{$name}}
+        - name: AWS_SQS_MAX_HOUNDI_YIELD_COUNT
+          valueFrom:
+            configMapKeyRef:
+              key: aws-sqs-max-houndi-yield-count
+              name: {{$name}}
+        - name: AWS_NAME_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              key: aws-name-prefix
+              name: {{$name}}
+        - name: DJANGO_SETTINGS_MODULE
+          valueFrom:
+            configMapKeyRef:
+              key: django-settings-module
+              name: {{$name}}
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: django-secret-key
+              name: {{$name}}
+        - name: DJANGO_ALLOWED_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              key: django-allowed-hosts
+              name: {{$name}}
+{{if $local_or_review}}
+        - name: DJANGO_DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              key: database-name
+              name: {{$db_secrets_file_name}}
+        - name: DJANGO_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: django-database-host
+              name: {{$name}}
+        - name: DJANGO_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: {{$db_secrets_file_name}}
+        - name: DJANGO_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: {{$db_secrets_file_name}}
+{{else}}
+        - name: DJANGO_DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: database-name
+              name: {{$name}}
+        - name: DJANGO_DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: database-port
+              name: {{$name}}
+        - name: DJANGO_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: django-database-host
+              name: {{$name}}
+        - name: DJANGO_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: {{$name}}
+        - name: DJANGO_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: {{$name}}
+{{end}}
+        - name: DJANGO_DEBUG
+          valueFrom:
+            configMapKeyRef:
+              key: django-debug
+              name: {{$name}}
+        - name: HOUNDIGRADE_ECS_CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-cluster-name
+              name: {{$name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-name
+              name: {{$name}}
+        - name: HOUNDIGRADE_ECS_IMAGE_TAG
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-image-tag
+              name: {{$name}}
+        - name: HOUNDIGRADE_ECS_FAMILY_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-ecs-family-name
+              name: {{$name}}
+        - name: HOUNDIGRADE_AWS_AVAILABILITY_ZONE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-availability-zone
+              name: {{$name}}
+        - name: HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-autoscaling-group-name
+              name: {{$name}}
+        - name: INSPECT_PENDING_IMAGES_MIN_AGE
+          valueFrom:
+            configMapKeyRef:
+              key: inspect-pending-images-min-age
+              name: {{$name}}
+        - name: INSPECT_PENDING_IMAGES_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: inspect-pending-images-schedule
+              name: {{$name}}
+        - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-scale-up-cluster-schedule
+              name: {{$name}}
+        - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-houndigrade-persist-inspection-results-schedule
+              name: {{$name}}
+        - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              key: aws-repopulate-ec2-instance-mapping-schedule
+              name: {{$name}}
+        - name: CLOUDTRAIL_EVENT_URL
+          valueFrom:
+            configMapKeyRef:
+              key: aws-cloudtrail-event-url
+              name: {{$name}}
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: aws-s3-bucket-name
+              name: {{$name}}
+        - name: CLOUDIGRADE_VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: cloudigrade-version
+              name: {{$name}}
+{{if $celery_sentry_enabled}}
+        - name: CELERY_ENABLE_SENTRY
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-enabled
+              name: {{$name}}
+        - name: CELERY_SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              key: celery-sentry-dsn
+              name: {{$name}}
+        - name: CELERY_SENTRY_RELEASE
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-release
+              name: {{$name}}
+        - name: CELERY_SENTRY_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              key: celery-sentry-environment
+              name: {{$name}}
+{{end}}
 {{if $not_local_or_review}}
         image: {{$listener_image}}
 {{else}}
         image: ' '
         imagePullPolicy: Always
 {{end}}
-        command: ['python']
-        args: ['sources_listener.py']
+        command:
+          - /bin/sh
+          - -c
+          - 'python ./manage.py listen_to_sources'
 {{if $not_local}}
         resources:
           requests:
