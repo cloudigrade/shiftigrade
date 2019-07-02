@@ -75,6 +75,9 @@
 {{$listener_auto_commit := (env "LISTENER_AUTO_COMMIT" | default .listener.auto_commit | quote)}}
 {{$listener_timeout_ms := (env "LISTENER_TIMEOUT" | default .listener.timeout_ms | quote)}}
 
+{{$enable_data_management_from_kafka_sources := (env "ENABLE_DATA_MANAGEMENT_FROM_KAFKA_SOURCES" | default .insights.enableDataManagementFromKafkaSources | quote)}}
+{{$sources_api_base_url := (env "SOURCES_API_BASE_URL" | default .insights.sources.baseUrl | quote)}}
+
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -147,4 +150,6 @@ data:
   listener-port: {{$listener_port}}
   listener-auto-commit: {{$listener_auto_commit}}
   listener-timeout-ms: {{$listener_timeout_ms}}
+  enable-data-management-from-kafka-sources: {{$enable_data_management_from_kafka_sources}}
+  sources-api-base-url: {{$sources_api_base_url}}
 type: Opaque

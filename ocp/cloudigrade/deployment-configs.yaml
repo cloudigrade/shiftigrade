@@ -1095,6 +1095,16 @@ spec:
             configMapKeyRef:
               key: listener-timeout-ms
               name: {{$name}}
+        - name: ENABLE_DATA_MANAGEMENT_FROM_KAFKA_SOURCES
+          valueFrom:
+            configMapKeyRef:
+              key: enable-data-management-from-kafka-sources
+              name: {{$name}}
+        - name: SOURCES_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: sources-api-base-url
+              name: {{$name}}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:

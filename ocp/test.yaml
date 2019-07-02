@@ -128,6 +128,10 @@ include:
         port: 9092
         auto_commit: True
         timeout_ms: 1000
+      insights:
+        enableDataManagementFromKafkaSources: true
+        sources:
+          baseUrl: http://sources-api.sources-prod.svc:8080/internal/v1.0
       inspectPendingImagesMinAge: 43200
       inspectPendingImagesSchedule: 900
   - name: scaligrade
