@@ -1,7 +1,7 @@
 ---
 global:
   env: review
-  namespace: cloudigrade-qa
+  namespace: cloudigrade-ci
   fancyDomain: false
   fancyDomainTLS: false
   tls: true
