@@ -52,6 +52,7 @@ Suffix:
 
 - ``-a`` for cloudigrade **a**\ pi
 - ``-b`` for celery **b**\ eat
+- ``-l`` for kafka **l**\ istener
 - ``-w`` for celery **w**\ orkers
 
 Running cloudigrade

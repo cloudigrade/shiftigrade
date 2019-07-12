@@ -1,7 +1,7 @@
 ---
 global:
   env: test
-  namespace: cloudigrade-test
+  namespace: cloudigrade-qa
   fancyDomain: true
   fancyDomainTLS: true
   tls: true
@@ -122,16 +122,16 @@ include:
             memLimit: 256Mi
         replicaCount: 1
         logLevel: INFO
-        topic: platform.cloudisources-test.event-stream
+        topic: platform.sources.event-stream
         groupId: cloudmeter_test
-        server: platform-mq-prod-kafka-bootstrap.platform-mq-prod.svc
+        server: platform-mq-qa-kafka-bootstrap.platform-mq-qa.svc
         port: 9092
         auto_commit: True
         timeout_ms: 1000
       insights:
         enableDataManagementFromKafkaSources: true
         sources:
-          baseUrl: http://sources-api.sources-prod.svc:8080/internal/v1.0
+          baseUrl: http://sources-api.sources-qa.svc:8080/internal/v1.0
       inspectPendingImagesMinAge: 43200
       inspectPendingImagesSchedule: 900
   - name: scaligrade
