@@ -85,8 +85,8 @@ oc-clean: oc-down
 	minishift delete -f
 
 oc-user:
-	oc rsh -c c-a $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=c-a  | awk '{print $$1}') scl enable rh-python36 -- python manage.py createsuperuser
+	oc rsh -c c-a $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=c-a  | awk '{print $$1}') python manage.py createsuperuser
 
 oc-user-authenticate:
 	@read -p "User name: " uname; \
-	oc rsh -c c-a $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=c-a | awk '{print $$1}') scl enable rh-python36 -- python manage.py drf_create_token $$uname
+	oc rsh -c c-a $$(oc get pods -o jsonpath='{.items[*].metadata.name}' -l name=c-a | awk '{print $$1}') python manage.py drf_create_token $$uname
