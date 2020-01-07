@@ -90,8 +90,11 @@ We recommend developing on the latest version of Fedora. Follow the following co
 
 .. code-block:: bash
 
-    # DNF Install AWS-CLI, Docker, and gettext
-    sudo dnf install docker -y
+    # DNF Install Docker
+    sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+    sudo dnf install -y docker-ce docker-ce-cli containerd.io
+    # DNF Install other minishift dependencies
+    sudo dnf install compat-openssl10 openssl openssl-devel kubectl awscli
     # Install an appropriate version of the OpenShift Client
     wget -O oc.tar.gz https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz
     tar -zxvf oc.tar.gz
@@ -118,7 +121,7 @@ We recommend developing on the latest version of Fedora. Follow the following co
     sudo firewall-cmd --permanent --zone dockerc --add-port 8053/udp
     sudo firewall-cmd --reload
 
-Please also fetch the latest release of ``kontemplate`` from `here <https://github.com/tazjin/kontemplate/releases>`_ and place it somewhere where it's in your ``$PATH``.
+Please also fetch ``kontemplate`` 1.6.0 from `here <https://github.com/tazjin/kontemplate/releases>`_ and place it somewhere in your ``$PATH``.
 
 Setup Minishift
 ~~~~~~~~~~~~~~~
