@@ -131,7 +131,7 @@ include:
       insights:
         enableDataManagementFromKafkaSources: false
         sources:
-          baseUrl: http://sources-api.sources-prod.svc:8080/internal/v1.0
+          baseUrl: http://sources-api.sources-prod.svc:8080
       inspectPendingImagesMinAge: 43200
       inspectPendingImagesSchedule: 900
   - name: scaligrade
