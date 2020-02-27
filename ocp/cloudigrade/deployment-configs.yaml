@@ -882,6 +882,11 @@ spec:
             configMapKeyRef:
               key: django-debug
               name: {{$name}}
+        - name: ENABLE_DATA_MANAGEMENT_FROM_KAFKA_SOURCES
+          valueFrom:
+            configMapKeyRef:
+              key: enable-data-management-from-kafka-sources
+              name: {{$name}}
         - name: HOUNDIGRADE_ECS_CLUSTER_NAME
           valueFrom:
             configMapKeyRef:
@@ -926,6 +931,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
+              name: {{$name}}
+        - name: SOURCES_API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: sources-api-base-url
               name: {{$name}}
         - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
           valueFrom:
