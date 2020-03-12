@@ -34,8 +34,6 @@ Test Templates:
     - kontemplate template ocp/local.yaml | oc apply --dry-run -f -
     - kontemplate template ocp/review.yaml | oc apply --dry-run -f -
     - kontemplate template ocp/test.yaml | oc apply --dry-run -f -
-    - kontemplate template ocp/stage.yaml | oc apply --dry-run -f -
-    - kontemplate template ocp/prod.yaml | oc apply --dry-run -f -
 
 Test Ansible Playbooks:
   stage: test
