@@ -404,7 +404,7 @@ spec:
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /healthz/
+            path: /internal/healthz/
             port: {{$nginx_port}}
             scheme: HTTP
             httpHeaders:
