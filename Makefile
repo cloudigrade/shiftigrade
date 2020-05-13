@@ -3,7 +3,7 @@ PYTHON		= $(shell which python)
 TOPDIR		= $(shell pwd)
 PYDIR		= cloudigrade
 
-OC_VERSION	= v3.11.43
+OC_VERSION	= v3.11.154
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
