@@ -152,22 +152,22 @@ spec:
             configMapKeyRef:
               key: aws-sqs-max-houndi-yield-count
               name: {{$name}}
-        - name: S3_BUCKET_LC_NAME
+        - name: AWS_S3_BUCKET_LC_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-lc-name
               name: {{$name}}
-        - name: S3_BUCKET_LC_IA_TRANSITION
+        - name: AWS_S3_BUCKET_LC_IA_TRANSITION
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-lc-ia-transition
               name: {{$name}}
-        - name: S3_BUCKET_LC_GLACIER_TRANSITION
+        - name: AWS_S3_BUCKET_LC_GLACIER_TRANSITION
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-lc-ia-glacier-transition
               name: {{$name}}
-        - name: S3_BUCKET_LC_MAX_AGE
+        - name: AWS_S3_BUCKET_LC_MAX_AGE
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-lc-max-age
@@ -275,12 +275,12 @@ spec:
             configMapKeyRef:
               key: aws-houndigrade-autoscaling-group-name
               name: {{$name}}
-        - name: CLOUDTRAIL_EVENT_URL
+        - name: AWS_CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
               name: {{$name}}
-        - name: S3_BUCKET_NAME
+        - name: AWS_S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-name
@@ -626,27 +626,27 @@ spec:
             configMapKeyRef:
               key: inspect-pending-images-schedule
               name: {{$name}}
-        - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
+        - name: HOUNDIGRADE_ECS_SCALE_UP_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
               name: {{$name}}
-        - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
+        - name: HOUNDIGRADE_ECS_PERSIST_INSPECTION_RESULTS_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-persist-inspection-results-schedule
               name: {{$name}}
-        - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
+        - name: AWS_REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-repopulate-ec2-instance-mapping-schedule
               name: {{$name}}
-        - name: CLOUDTRAIL_EVENT_URL
+        - name: AWS_CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
               name: {{$name}}
-        - name: S3_BUCKET_NAME
+        - name: AWS_S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-name
@@ -882,7 +882,7 @@ spec:
             configMapKeyRef:
               key: django-debug
               name: {{$name}}
-        - name: ENABLE_DATA_MANAGEMENT_FROM_KAFKA_SOURCES
+        - name: SOURCES_ENABLE_DATA_MANAGEMENT_FROM_KAFKA
           valueFrom:
             configMapKeyRef:
               key: enable-data-management-from-kafka-sources
@@ -927,7 +927,7 @@ spec:
             configMapKeyRef:
               key: inspect-pending-images-schedule
               name: {{$name}}
-        - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
+        - name: HOUNDIGRADE_ECS_SCALE_UP_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
@@ -937,22 +937,22 @@ spec:
             configMapKeyRef:
               key: sources-api-base-url
               name: {{$name}}
-        - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
+        - name: HOUNDIGRADE_ECS_PERSIST_INSPECTION_RESULTS_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-persist-inspection-results-schedule
               name: {{$name}}
-        - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
+        - name: AWS_REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-repopulate-ec2-instance-mapping-schedule
               name: {{$name}}
-        - name: CLOUDTRAIL_EVENT_URL
+        - name: AWS_CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
               name: {{$name}}
-        - name: S3_BUCKET_NAME
+        - name: AWS_S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-name
@@ -1105,7 +1105,7 @@ spec:
             configMapKeyRef:
               key: listener-timeout-ms
               name: {{$name}}
-        - name: ENABLE_DATA_MANAGEMENT_FROM_KAFKA_SOURCES
+        - name: SOURCES_ENABLE_DATA_MANAGEMENT_FROM_KAFKA
           valueFrom:
             configMapKeyRef:
               key: enable-data-management-from-kafka-sources
@@ -1273,27 +1273,27 @@ spec:
             configMapKeyRef:
               key: inspect-pending-images-schedule
               name: {{$name}}
-        - name: SCALE_UP_INSPECTION_CLUSTER_SCHEDULE
+        - name: HOUNDIGRADE_ECS_SCALE_UP_CLUSTER_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-scale-up-cluster-schedule
               name: {{$name}}
-        - name: PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE
+        - name: HOUNDIGRADE_ECS_PERSIST_INSPECTION_RESULTS_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-houndigrade-persist-inspection-results-schedule
               name: {{$name}}
-        - name: REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
+        - name: AWS_REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE
           valueFrom:
             configMapKeyRef:
               key: aws-repopulate-ec2-instance-mapping-schedule
               name: {{$name}}
-        - name: CLOUDTRAIL_EVENT_URL
+        - name: AWS_CLOUDTRAIL_EVENT_URL
           valueFrom:
             configMapKeyRef:
               key: aws-cloudtrail-event-url
               name: {{$name}}
-        - name: S3_BUCKET_NAME
+        - name: AWS_S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
               key: aws-s3-bucket-name

@@ -22,13 +22,13 @@
 {{$aws_houndigrade_ecs_family_name := (env "HOUNDIGRADE_ECS_FAMILY_NAME" | default .aws.houndigrade.ecs.familyName)}}
 {{$aws_houndigrade_ecs_availability_zone := (env "HOUNDIGRADE_AWS_AVAILABILITY_ZONE" | default .aws.houndigrade.availabilityZone)}}
 {{$aws_houndigrade_ecs_autoscaling_group_name := (env "HOUNDIGRADE_AWS_AUTOSCALING_GROUP_NAME" | default .aws.houndigrade.autoscalingGroupName)}}
-{{$aws_houndigrade_ecs_scale_up_cluster_schedule := (env "SCALE_UP_INSPECTION_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote)}}
-{{$aws_houndigrade_ecs_persist_inspection_results_schedule := (env "PERSIST_INSPECTION_CLUSTER_RESULTS_SCHEDULE" | default .aws.houndigrade.persistInspectionResultsSchedule | quote)}}
+{{$aws_houndigrade_ecs_scale_up_cluster_schedule := (env "HOUNDIGRADE_ECS_SCALE_UP_CLUSTER_SCHEDULE" | default .aws.houndigrade.scaleUpClusterSchedule | quote)}}
+{{$aws_houndigrade_ecs_persist_inspection_results_schedule := (env "HOUNDIGRADE_ECS_PERSIST_INSPECTION_RESULTS_SCHEDULE" | default .aws.houndigrade.persistInspectionResultsSchedule | quote)}}
 
-{{$aws_repopulate_ec2_instance_mapping_schedule := (env "REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE" | default .aws.repopulateEc2InstanceMappingSchedule | quote)}}
+{{$aws_repopulate_ec2_instance_mapping_schedule := (env "AWS_REPOPULATE_EC2_INSTANCE_MAPPING_SCHEDULE" | default .aws.repopulateEc2InstanceMappingSchedule | quote)}}
 
 {{$aws_sqs_default_region := .aws.sqs.defaultRegion}}
-{{$aws_cloudtrail_event_url := (env "CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl)}}
+{{$aws_cloudtrail_event_url := (env "AWS_CLOUDTRAIL_EVENT_URL" | default .aws.cloudtrailEventUrl)}}
 {{$aws_sqs_max_receive_count := (env "AWS_SQS_MAX_RECEIVE_COUNT" | default .aws.sqs.maxReceiveCount | quote)}}
 {{$aws_sqs_max_yield_count := (env "AWS_SQS_MAX_YIELD_COUNT" | default .aws.sqs.maxYieldCount | quote)}}
 {{$aws_sqs_max_houndi_yield_count := (env "AWS_SQS_MAX_HOUNDI_YIELD_COUNT" | default .aws.sqs.maxHoundiYieldCount | quote)}}
@@ -40,10 +40,10 @@
 {{$aws_local_bucketprefix_name := ($bucketprefix | printf "%s-cloudigrade-s3" | quote)}}
 {{$aws_local_bucket_name := (or (env "AWS_S3_BUCKET_NAME") ($aws_local_bucketprefix_name))}}
 
-{{$aws_s3_bucket_lc_name := (env "S3_BUCKET_LC_NAME" | default .aws.s3Lifecycle.name)}}
-{{$aws_s3_bucket_lc_ia_transition := (env "S3_BUCKET_LC_IA_TRANSITION" | default .aws.s3Lifecycle.iaTransition | quote)}}
-{{$aws_s3_bucket_lc_glacier_transition := (env "S3_BUCKET_LC_GLACIER_TRANSITION" | default .aws.s3Lifecycle.glacierTransition | quote)}}
-{{$aws_s3_bucket_lc_max_age := (env "S3_BUCKET_LC_MAX_AGE" | default .aws.s3Lifecycle.maxAge | quote)}}
+{{$aws_s3_bucket_lc_name := (env "AWS_S3_BUCKET_LC_NAME" | default .aws.s3Lifecycle.name)}}
+{{$aws_s3_bucket_lc_ia_transition := (env "AWS_S3_BUCKET_LC_IA_TRANSITION" | default .aws.s3Lifecycle.iaTransition | quote)}}
+{{$aws_s3_bucket_lc_glacier_transition := (env "AWS_S3_BUCKET_LC_GLACIER_TRANSITION" | default .aws.s3Lifecycle.glacierTransition | quote)}}
+{{$aws_s3_bucket_lc_max_age := (env "AWS_S3_BUCKET_LC_MAX_AGE" | default .aws.s3Lifecycle.maxAge | quote)}}
 
 {{$django_allowed_hosts := .django.allowedHosts | quote}}
 {{$django_database_host := env "DJANGO_DATABASE_HOST" | default .db.databaseHost}}
@@ -75,7 +75,7 @@
 {{$listener_auto_commit := (env "LISTENER_AUTO_COMMIT" | default .listener.auto_commit | quote)}}
 {{$listener_timeout_ms := (env "LISTENER_TIMEOUT" | default .listener.timeout_ms | quote)}}
 
-{{$enable_data_management_from_kafka_sources := (env "ENABLE_DATA_MANAGEMENT_FROM_KAFKA_SOURCES" | default .insights.enableDataManagementFromKafkaSources | quote)}}
+{{$enable_data_management_from_kafka_sources := (env "SOURCES_ENABLE_DATA_MANAGEMENT_FROM_KAFKA" | default .insights.enableDataManagementFromKafkaSources | quote)}}
 {{$sources_api_base_url := (env "SOURCES_API_BASE_URL" | default .insights.sources.baseUrl | quote)}}
 
 ---

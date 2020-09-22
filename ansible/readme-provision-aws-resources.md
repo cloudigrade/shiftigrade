@@ -104,10 +104,10 @@ Additionally you need to provide the URL for the SQS queue that the s3 bucket se
 
 ```
 # must be in same environment where other variables are set.
-# additionally, need to know the CLOUDTRAIL_EVENT_URL, which is the url for the sqs queue
+# additionally, need to know the AWS_CLOUDTRAIL_EVENT_URL, which is the url for the sqs queue
 # that the s3 notification set up to send events to
 export AWS_ACCOUNT_NUMBER=$number_for_your_cloudigrade_aws_account
-export CLOUDTRAIL_EVENT_URL=	"https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_NUMBER}/${DEPLOYMENT_PREFIX}-cloudigrade-cloudtrail-sqs"
+export AWS_CLOUDTRAIL_EVENT_URL=	"https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_NUMBER}/${DEPLOYMENT_PREFIX}-cloudigrade-cloudtrail-sqs"
 make oc-create-cloudigrade-all
 oc start-build cloudigrade-api
 ```
