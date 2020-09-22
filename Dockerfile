@@ -1,7 +1,6 @@
 FROM frolvlad/alpine-glibc
 
-RUN apk add --no-cache ansible ca-certificates \
-    && ln -s /usr/bin/pip3 /usr/bin/pip \
+RUN apk add --no-cache ansible ca-certificates py3-pip \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && pip install --upgrade pip \
     && pip install boto boto3
