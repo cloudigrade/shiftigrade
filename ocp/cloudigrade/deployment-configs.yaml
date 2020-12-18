@@ -1349,7 +1349,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              - 'ps axo pid | grep `cat /var/run/cloudigrade/cloudilistener.pid`'
+              - 'ps axo command | grep -v grep | grep python'
           failureThreshold: 3
           initialDelaySeconds: 5
           periodSeconds: 10
@@ -1360,7 +1360,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              - 'ps axo pid | grep `cat /var/run/cloudigrade/cloudilistener.pid`'
+              - '[[ $(ps axo command | grep "[p]ython" | grep "./manage.py" | grep -c "listen_to_sources") -eq 1 ]]'
           failureThreshold: 3
           initialDelaySeconds: 5
           periodSeconds: 10
