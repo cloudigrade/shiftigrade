@@ -1,0 +1,87 @@
+# Name of this environment
+env: dev
+
+# Default component state
+ecs_state: "present"
+s3_state: "present"
+
+### ecs.yml
+# ECS Resource Names
+ecs_cluster_name: cloudigrade-ecs-{{env}}
+ecs_iam_role_name: cloudigrade-ecs-role-{{env}}
+ecs_iam_policy_name: cloudigrade-ecs-policy-{{env}}
+ecs_cloudwatch_iam_policy_name: cloudigrade-cloudwatch-policy-{{env}}
+ec2_ssh_key_name: cloudigrade-ecs-ssh-{{env}}
+ec2_sg_name: cloudigrade-sg-{{env}}
+ec2_lc_name: cloudigrade-lc-{{env}}
+ec2_asg_name: cloudigrade-ecs-asg-{{env}}
+
+# EC2 LC Defaults
+ec2_instance_monitoring: true
+ec2_instance_type: "t2.micro"
+recommended_ami: "{{ lookup('aws_ssm', '/aws/service/ecs/optimized-ami/amazon-linux-2/recommended', shortnames=true, bypath=true ) }}"
+# Needed to register the EC2 instance with ECS
+# https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
+ec2_userdata: |
+  Content-Type: multipart/mixed; boundary="//"
+  MIME-Version: 1.0
+
+  --//
+  MIME-Version: 1.0
+  Content-Type: text/x-shellscript; charset="us-ascii"
+
+  #!/bin/bash
+
+  # Set cluster name in ECS config
+  echo ECS_CLUSTER={{ ecs_cluster_name }} >> /etc/ecs/ecs.config;
+  --//
+
+# ECS ASG Defaults
+ec2_asg_min_size: 0
+ec2_asg_max_size: 0
+ec2_asg_desired_capacity: 0
+ec2_asg_replace_all_instances: yes
+### ecs.yml
+
+### s3.yml
+# Names
+s3_bucket_name: "cloudigrade-{{env}}"
+sqs_name: "cloudigrade-cloudtrail-s3-{{env}}"
+s3_bucket_arn: "arn:aws:s3:::{{ s3_bucket_name }}"
+
+# Policies
+sqs_policy:
+  Version: "2012-10-17"
+  Id: "{{ sqs_name }}-policy-id"
+  Statement:
+    - Sid: "{{ sqs_name }}-statement-id"
+      Effect: "Allow"
+      Principal:
+        AWS: "*"
+      Action: "SQS:SendMessage"
+      Resource: "{{ queue.queue_arn }}"
+      Condition:
+        ArnLike:
+          aws:SourceArn: "{{ s3_bucket_arn }}"
+
+s3_bucket_policy:
+  Version: "2012-10-17"
+  Id: "{{ s3_bucket_name }}-policy-id"
+  Statement:
+    - Sid: "{{ s3_bucket_name }}-statement-id-allow-cloudtrail-get-acl"
+      Effect: "Allow"
+      Principal:
+        Service: "cloudtrail.amazonaws.com"
+      Action: "s3:GetBucketAcl"
+      Resource: "{{ s3_bucket_arn }}"
+    - Sid: "{{ s3_bucket_name }}-statement-id-allow-cloudtrail-put-object"
+      Effect: "Allow"
+      Action: "s3:PutObject"
+      Principal:
+        Service: "cloudtrail.amazonaws.com"
+      Condition:
+        StringEquals:
+          s3:x-amz-acl: "bucket-owner-full-control"
+      Resource:
+        - "{{ s3_bucket_arn }}/AWSLogs/*"
+

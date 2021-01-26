@@ -1,0 +1,40 @@
+---
+# tasks file for aws-cloudigrade-cloudtrail
+- block:
+  - name: create / sqs queue
+    sqs_queue:
+      name: "{{ sqs_name }}"
+      state: present
+    register: queue
+
+  - name: create / s3 bucket with policy
+    s3_bucket:
+      name: "{{ s3_bucket_name }}"
+      policy: "{{ s3_bucket_policy }}"
+      state: present
+
+  - name: update / sqs queue with policy
+    sqs_queue:
+      name: "{{ sqs_name }}"
+      policy: "{{ sqs_policy }}"
+      state: present
+
+  - name: create / sqs notification for s3 bucket
+    script: "create-notification.py --bucket {{ s3_bucket_name }} --queue {{ queue.queue_arn }}"
+
+  when: s3_state == "present"
+
+
+- block:
+  - name: destroy / s3 bucket
+    s3_bucket:
+      name: "{{ s3_bucket_name }}"
+      force: yes
+      state: absent
+
+  - name: destroy / sqs queue
+    sqs_queue:
+      name: "{{ sqs_name }}"
+      state: absent
+
+  when: s3_state == "absent"
