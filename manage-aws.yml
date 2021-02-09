@@ -4,3 +4,7 @@
   gather_facts: no
   roles:
     - aws
+  vars:
+    ecs_state: present
+    s3_state: present
+    iam_state: present

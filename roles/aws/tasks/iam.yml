@@ -1,0 +1,38 @@
+- block:
+  - name: Get the current caller identity information
+    amazon.aws.aws_caller_info:
+    register: aws_caller_info
+
+  - name: Create two new IAM users with API keys
+    community.aws.iam:
+      iam_type: user
+      name: "{{ iam_user_name }}"
+      access_key_state: create
+      key_count: 1
+      state: present
+
+  - name: Create S3 policy from template
+    community.aws.iam_policy:
+      iam_type: user
+      iam_name: "{{ iam_user_name }}"
+      policy_name: "{{ iam_policy_name }}"
+      policy_json: "{{ lookup( 'template', 'cloudigrade-deployment-policy.json.j2') | to_json }}"
+      state: present
+
+
+  when:
+    - ecs_state == "present"
+    - s3_state == "present"
+    - iam_state == "present"
+
+
+- block:
+  - name: Destroy IAM user
+    iam:
+      iam_type: user
+      name: "{{ iam_user_name }}"
+      state: absent
+
+  when:
+    - iam_state == "absent"
+

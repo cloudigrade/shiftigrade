@@ -4,6 +4,7 @@ env: dev
 # Default component state
 ecs_state: "present"
 s3_state: "present"
+iam_state: "present"
 
 ### ecs.yml
 # ECS Resource Names
@@ -59,7 +60,7 @@ sqs_policy:
       Principal:
         AWS: "*"
       Action: "SQS:SendMessage"
-      Resource: "{{ queue.queue_arn }}"
+      Resource: "{{ sqs_queue.queue_arn }}"
       Condition:
         ArnLike:
           aws:SourceArn: "{{ s3_bucket_arn }}"
@@ -84,4 +85,9 @@ s3_bucket_policy:
           s3:x-amz-acl: "bucket-owner-full-control"
       Resource:
         - "{{ s3_bucket_arn }}/AWSLogs/*"
+
+### iam.yml
+# Names
+iam_user_name: "cloudigrade-user-{{env}}"
+iam_policy_name: "cloudigrade-deploy-policy-{{env}}"
 

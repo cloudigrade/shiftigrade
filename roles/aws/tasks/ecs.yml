@@ -30,6 +30,7 @@
     ecs_cluster:
       name: "{{ecs_cluster_name}}"
       state: present
+    register: ecs_cluster
 
   - name: create / ec2 ssh keypair
     ec2_key:
@@ -65,6 +66,7 @@
       max_size: "{{ec2_asg_max_size}}"
       launch_config_name: "{{ec2_lc_name}}"
       state: present
+    register: ec2_autoscaling_group
 
   when: ecs_state == "present"
 
