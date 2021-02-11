@@ -57,10 +57,12 @@
       security_groups: ["{{ec2_sg_name}}"]
       user_data: "{{ ec2_userdata }}"
       state: present
+    register: ec2_launch_configuration
 
   - name: create / ec2 auto scaling group
     ec2_asg:
       name: "{{ec2_asg_name}}"
+      availability_zones: ["{{ec2_asg_az}}",]
       desired_capacity: "{{ec2_asg_desired_capacity}}"
       min_size: "{{ec2_asg_min_size}}"
       max_size: "{{ec2_asg_max_size}}"

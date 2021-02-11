@@ -38,6 +38,7 @@ ec2_userdata: |
   --//
 
 # ECS ASG Defaults
+ec2_asg_az: "us-east-1a"
 ec2_asg_min_size: 0
 ec2_asg_max_size: 0
 ec2_asg_desired_capacity: 0
